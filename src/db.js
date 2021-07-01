@@ -22,6 +22,7 @@ class Database {
         const db = client.db('cryptoblades-wax');
         this.$log = db.collection('log');
         this.$transfers = db.collection('transfers');
+        this.$fights = db.collection('fights');
         resolve();
       });
     });

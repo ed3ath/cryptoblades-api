@@ -17,8 +17,9 @@ All routes that involve adding data take `secret` as a URL parameter. This must 
 
 ### Getters
 
-- `/characters/name/:id` - get character name by id
+- GET `/characters/name/:id` - get character name by id
 
 ### Transactions
 
-- `/add-transaction` - pass `waxWallet`, `bscWallet`, `waxAmount` as URL parameters
+- GET `/fight/add` - pass `timestamp`, `blockNumber`, `transactionHash`, `accountAddress`, `characterId`, `characterLevel`, `weaponId`, `weaponData`, `enemyId`, `wonFight`, `enemyRoll`, `playerRoll`, `xpGain`, `skillGain`
+- GET `/wax/add` - pass `waxWallet`, `bscWallet`, `waxAmount` as URL parameters

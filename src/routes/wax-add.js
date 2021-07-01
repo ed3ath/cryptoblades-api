@@ -2,7 +2,7 @@
 const { DB } = require('../db');
 
 exports.route = (app) => {
-  app.get('/wax/add-transaction', async (req, res) => {
+  app.get('/wax/add', async (req, res) => {
 
     const { waxWallet, bscWallet, waxAmount } = req.query;
     if(!waxWallet || !bscWallet || !waxAmount) {
