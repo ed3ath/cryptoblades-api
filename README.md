@@ -13,7 +13,11 @@ Create a `.env` file with the following:
 
 ## Routes
 
-All routes take `secret` as a URL parameter. This must match `API_SECRET` (if set) or the request will fail.
+All routes that involve adding data take `secret` as a URL parameter. This must match `API_SECRET` (if set) or the request will fail.
+
+### Getters
+
+- `/characters/name/:id` - get character name by id
 
 ### Transactions
 
