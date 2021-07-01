@@ -20,6 +20,7 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "mongodb": "^3.6.9"
+    "mongodb": "^3.6.9",
+    "seedrandom": "^3.0.5"
   }
 }
