@@ -10,7 +10,7 @@ exports.route = (app) => {
     }
 
     try {
-      await DB.$marketcancels.insertOne({ hash, accountAddress, nftAddress, nftId });
+      await DB.$marketcancels.replaceOne({ hash }, { hash, accountAddress, nftAddress, nftId }, { upsert: true });
     } catch(error) {
       return res.status(500).json({ error })
     }

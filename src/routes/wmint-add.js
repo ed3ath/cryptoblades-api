@@ -10,7 +10,7 @@ exports.route = (app) => {
     }
 
     try {
-      await DB.$wmints.insertOne({ hash, accountAddress, weaponId });
+      await DB.$wmints.replaceOne({ hash }, { hash, accountAddress, weaponId }, { upsert: true });
     } catch(error) {
       return res.status(500).json({ error })
     }

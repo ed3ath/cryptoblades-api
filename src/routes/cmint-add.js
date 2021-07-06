@@ -10,7 +10,7 @@ exports.route = (app) => {
     }
 
     try {
-      await DB.$cmints.insertOne({ hash, accountAddress, charId });
+      await DB.$cmints.replaceOne({ hash }, { hash, accountAddress, charId }, { upsert: true });
     } catch(error) {
       return res.status(500).json({ error })
     }
