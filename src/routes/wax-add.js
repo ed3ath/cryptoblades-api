@@ -10,7 +10,6 @@ exports.route = (app) => {
     }
 
     DB.$log.insertOne({ waxWallet, bscWallet, waxAmount, waxChainTransactionId, waxChainBlockNumber, bscTransactionId });
-    DB.$transfers.insertOne({ waxWallet, bscWallet, waxAmount, waxChainTransactionId, waxChainBlockNumber, bscTransactionId });
 
     res.json({ added: true });
     

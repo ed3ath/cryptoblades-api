@@ -19,10 +19,24 @@ class Database {
 
         console.log('Connected to ' + DB_URI);
   
-        const db = client.db('cryptoblades-wax');
+        const db = client.db('cryptoblades');
         this.$log = db.collection('log');
-        this.$transfers = db.collection('transfers');
-        this.$fights = db.collection('fights');
+        this.$fights = db.collection('leaderboard-fights');
+        this.$wmints = db.collection('leaderboard-weaponmints');
+        this.$cmints = db.collection('leaderboard-charactermints');
+        this.$reforges = db.collection('leaderboard-reforges');
+        this.$clevels = db.collection('leaderboard-characterlevels');
+        this.$marketlists = db.collection('leaderboard-marketlists');
+        this.$marketsells = db.collection('leaderboard-marketsells');
+        this.$marketcancels = db.collection('leaderboard-marketcancels');
+        this.$marketchanges = db.collection('leaderboard-marketchanges');
+
+        Object.keys(this).forEach(key => {
+          if(!key.startsWith('$')) return;
+
+          this[key].createIndex({ hash: 1 }, { unique: true });
+        });
+
         resolve();
       });
     });
