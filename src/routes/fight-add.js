@@ -10,7 +10,7 @@ exports.route = (app) => {
     }
 
     try {
-      await DB.$fights.insertOne({ hash, accountAddress, characterId, characterLevel, weaponId, enemyId, wonFight, enemyRoll, playerRoll, xpGain, skillGain });
+      await DB.$fights.replaceOne({ hash }, { hash, accountAddress, characterId, characterLevel, weaponId, enemyId, wonFight, enemyRoll, playerRoll, xpGain, skillGain }, { upsert: true });
     } catch(error) {
       return res.status(500).json({ error })
     }
