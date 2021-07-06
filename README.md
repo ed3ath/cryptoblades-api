@@ -21,7 +21,7 @@ All routes that involve adding data take `secret` as a URL parameter. This must 
 
 ### Transactions
 
-- GET `/leaderboard/fight/add` - pass `hash`, `accountAddress`, `characterId`, `characterLevel`, `weaponId`, `weaponData`, `enemyId`, `wonFight`, `enemyRoll`, `playerRoll`, `xpGain`, `skillGain`
+- GET `/leaderboard/fight/add` - pass `hash`, `accountAddress`, `characterId`, `characterLevel`, `weaponId`, `enemyId`, `wonFight`, `enemyRoll`, `playerRoll`, `xpGain`, `skillGain`
 - GET `/leaderboard/weapon/mint/add` - pass `hash`, `accountAddress`, `weaponId`
 - GET `/leaderboard/weapon/reforge/add` - pass `hash`, `accountAddress`, `weaponId`, `burnId`
 - GET `/leaderboard/character/mint/add` - pass `hash`, `accountAddress`, `charId`
