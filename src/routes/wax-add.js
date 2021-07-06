@@ -12,7 +12,7 @@ exports.route = (app) => {
     try {
       await DB.$log.insertOne({ waxWallet, bscWallet, waxAmount, waxChainTransactionId, waxChainBlockNumber, bscTransactionId });
     } catch(error) {
-      return res.status(400).json({ error })
+      return res.status(500).json({ error })
     }
 
     res.json({ added: true });

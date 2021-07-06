@@ -12,7 +12,7 @@ exports.route = (app) => {
     try {
       await DB.$reforges.insertOne({ hash, accountAddress, weaponId, burnId });
     } catch(error) {
-      return res.status(400).json({ error })
+      return res.status(500).json({ error })
     }
 
     res.json({ added: true });
