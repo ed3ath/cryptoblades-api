@@ -10,7 +10,7 @@ exports.route = (app) => {
     }
 
     try {
-      await DB.$fights.insertOne({ hash, accountAddress, characterId, characterLevel, weaponId, weaponData, enemyId, wonFight, enemyRoll, playerRoll, xpGain, skillGain });
+      await DB.$fights.insertOne({ hash, accountAddress, characterId, characterLevel, weaponId, enemyId, wonFight, enemyRoll, playerRoll, xpGain, skillGain });
     } catch(error) {
       return res.status(500).json({ error })
     }
