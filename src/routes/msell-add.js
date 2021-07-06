@@ -9,7 +9,11 @@ exports.route = (app) => {
       return res.status(400).json({ error: 'Invalid query. Must pass hash, accountAddress, buyerAddress, nftAddress, nftId, price.' });
     }
 
-    DB.$marketlists.insertOne({ hash, accountAddress, buyerAddress, nftAddress, nftId, price });
+    try {
+      await DB.$marketlists.insertOne({ hash, accountAddress, buyerAddress, nftAddress, nftId, price });
+    } catch(error) {
+      return res.status(400).json({ error })
+    }
 
     res.json({ added: true });
     

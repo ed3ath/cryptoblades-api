@@ -9,7 +9,11 @@ exports.route = (app) => {
       return res.status(400).json({ error: 'Invalid query. Must pass hash, accountAddress, charId.' });
     }
 
-    DB.$clevels.insertOne({ hash, accountAddress, charId, level });
+    try {
+      await DB.$clevels.insertOne({ hash, accountAddress, charId, level });
+    } catch(error) {
+      return res.status(400).json({ error })
+    }
 
     res.json({ added: true });
     

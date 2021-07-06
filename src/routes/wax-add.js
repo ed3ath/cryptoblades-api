@@ -9,7 +9,11 @@ exports.route = (app) => {
       return res.status(400).json({ error: 'Invalid query. Must pass waxWallet, waxAmount, waxChainTransactionId, waxChainBlockNumber, bscTransactionId.' });
     }
 
-    DB.$log.insertOne({ waxWallet, bscWallet, waxAmount, waxChainTransactionId, waxChainBlockNumber, bscTransactionId });
+    try {
+      await DB.$log.insertOne({ waxWallet, bscWallet, waxAmount, waxChainTransactionId, waxChainBlockNumber, bscTransactionId });
+    } catch(error) {
+      return res.status(400).json({ error })
+    }
 
     res.json({ added: true });
     

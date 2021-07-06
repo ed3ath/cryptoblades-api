@@ -9,7 +9,11 @@ exports.route = (app) => {
       return res.status(400).json({ error: 'Invalid query. Must pass hash, accountAddress, weaponId.' });
     }
 
-    DB.$wmints.insertOne({ hash, accountAddress, weaponId });
+    try {
+      await DB.$wmints.insertOne({ hash, accountAddress, weaponId });
+    } catch(error) {
+      return res.status(400).json({ error })
+    }
 
     res.json({ added: true });
     

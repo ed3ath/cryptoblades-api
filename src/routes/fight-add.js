@@ -9,7 +9,11 @@ exports.route = (app) => {
       return res.status(400).json({ error: 'Invalid query. Must pass hash, accountAddress, characterId, characterLevel, weaponId, weaponData, enemyId, wonFight, enemyRoll, playerRoll, xpGain, skillGain.' });
     }
 
-    DB.$fights.insertOne({ hash, accountAddress, characterId, characterLevel, weaponId, weaponData, enemyId, wonFight, enemyRoll, playerRoll, xpGain, skillGain });
+    try {
+      await DB.$fights.insertOne({ hash, accountAddress, characterId, characterLevel, weaponId, weaponData, enemyId, wonFight, enemyRoll, playerRoll, xpGain, skillGain });
+    } catch(error) {
+      return res.status(400).json({ error })
+    }
 
     res.json({ added: true });
     
