@@ -23,7 +23,12 @@ class Database {
         
         this.$log = db.collection('log');
 
+        this.$leaderboard = db.collection('leaderboard');
+        this.$leaderboard.createIndex({ key: 1 });
+
         this.$fights = db.collection('leaderboard-fights');
+        this.$fights.createIndex({ characterId: 1, wonFight: 1 });
+
         this.$wmints = db.collection('leaderboard-weaponmints');
         this.$cmints = db.collection('leaderboard-charactermints');
         this.$reforges = db.collection('leaderboard-reforges');

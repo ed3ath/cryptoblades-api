@@ -5,6 +5,20 @@ const express = require('express');
 const { DB } = require('./db');
 const { secretCheck } = require('./middleware/secret');
 
+// cron related
+const startTasks = () => {
+  fs.readdir(`${__dirname}/tasks`, (err, files) => {
+    files.forEach(file => {
+      const { duration, task } = require(`${__dirname}/tasks/${file}`);
+
+      setInterval(() => {
+        task();
+      }, duration * 1000);
+    });
+  });
+};
+
+// express related
 const unless = (path, middleware) => {
   return (req, res, next) => {
       if (req.path.includes(path)) {
@@ -15,11 +29,11 @@ const unless = (path, middleware) => {
   };
 };
 
-DB.isReady.then(() => {
+const startApp = () => {
   const app = express();
   app.use(require('cors')());
 
-  app.use(unless('/character', secretCheck));
+  app.use(unless('/static', secretCheck));
 
   const port = process.env.PORT || 3000;
   app.listen(port, () => {
@@ -32,4 +46,10 @@ DB.isReady.then(() => {
       });
     });
   });
+};
+
+// wait for DB to be ready then go
+DB.isReady.then(() => {
+  startApp();
+  startTasks();
 });
