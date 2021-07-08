@@ -17,7 +17,7 @@ const getFightWinLeaderboard = async () => {
   ]).toArray();
 
   return fightWinLeaderboard.map(x => ({
-    name: `${getCharacterNameFromSeed(x._id)} (${x._id})`,
+    name: `${getCharacterNameFromSeed(x._id)} (ID ${x._id})`,
     value: x.count
   }));
 };
