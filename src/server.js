@@ -10,6 +10,8 @@ const startTasks = () => {
   fs.readdir(`${__dirname}/tasks`, (err, files) => {
     files.forEach(file => {
       const { duration, task } = require(`${__dirname}/tasks/${file}`);
+      
+      task();
 
       setInterval(() => {
         task();
