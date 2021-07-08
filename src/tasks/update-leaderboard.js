@@ -27,7 +27,7 @@ exports.task = async () => {
 
   await DB.$leaderboard.replaceOne(
     { key: 'Fights Won' }, 
-    { key: 'Fights Won', units: 'Fights Won', leaderboard: fightWins }, 
+    { key: 'Fights Won', units: 'Won', leaderboard: fightWins }, 
     { upsert: true }
   );
 };
