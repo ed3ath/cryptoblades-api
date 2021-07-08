@@ -40,7 +40,7 @@ class Database {
 
         Object.keys(this).forEach(key => {
           if(!key.startsWith('$')) return;
-          if(key === '$log') return;
+          if(key === '$log' || key === '$leaderboard') return;
 
           this[key].createIndex({ hash: 1 }, { unique: true });
         });
