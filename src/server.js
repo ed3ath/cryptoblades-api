@@ -11,9 +11,11 @@ const startTasks = () => {
     files.forEach(file => {
       const { duration, task } = require(`${__dirname}/tasks/${file}`);
       
+      console.log(`Running ${file}...`);
       task();
 
       setInterval(() => {
+        console.log(`Running ${file}...`);
         task();
       }, duration * 1000);
     });
