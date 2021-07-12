@@ -55,7 +55,7 @@ const getForges = async () => {
 };
 
 const getReforges = async () => {
-  const reforgeLeaderboard = await DB.$wmints.aggregate([
+  const reforgeLeaderboard = await DB.$reforges.aggregate([
     { $group: { _id: '$accountAddress', count: { $sum: 1 } } },
 
     { $sort: { count: -1 } },
@@ -101,7 +101,7 @@ exports.task = async () => {
   );
 
   // count reforges
-  const reforges = await getForges();
+  const reforges = await getReforges();
 
   await DB.$leaderboard.replaceOne(
     { key: 'Weapon Reforges' }, 
