@@ -17,8 +17,9 @@ All routes that involve adding data take `secret` as a URL parameter. This must 
 
 ### Getters
 
-- GET `/characters/name/:id` - get character name by id
-- GET `/weapons/name/:id` - get weapon name by id
+- GET `/static/leaderboard` - get the entire leaderboard
+- GET `/static/characters/name/:id` - get character name by id
+- GET `/static/weapons/name/:id` - get weapon name by id
 
 ### Transactions
 
