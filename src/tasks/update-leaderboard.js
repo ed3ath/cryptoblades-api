@@ -3,7 +3,7 @@ const { DB } = require('../db');
 
 const { getCharacterNameFromSeed } = require('../helpers/char-name');
 
-exports.duration = process.env.NODE_ENV === 'production' ? 900 :  5;
+const LEADERBOARD_MAX = 25;
 
 const getFightWinLeaderboard = async () => {
   const fightWinLeaderboard = await DB.$fights.aggregate([
@@ -13,7 +13,7 @@ const getFightWinLeaderboard = async () => {
 
     { $sort: { count: -1 } },
 
-    { $limit: 10 }
+    { $limit: LEADERBOARD_MAX }
   ]).toArray();
 
   return fightWinLeaderboard.map(x => ({
@@ -30,7 +30,7 @@ const getFightLossLeaderboard = async () => {
 
     { $sort: { count: -1 } },
 
-    { $limit: 10 }
+    { $limit: LEADERBOARD_MAX }
   ]).toArray();
 
   return fightLossLeaderboard.map(x => ({
@@ -38,6 +38,8 @@ const getFightLossLeaderboard = async () => {
     value: x.count
   }));
 };
+
+exports.duration = process.env.NODE_ENV === 'production' ? 900 :  5;
 
 exports.task = async () => {
   const fightWins = await getFightWinLeaderboard();
