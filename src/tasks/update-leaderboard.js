@@ -42,6 +42,8 @@ const getFightLossLeaderboard = async () => {
 exports.duration = process.env.NODE_ENV === 'production' ? 900 :  5;
 
 exports.task = async () => {
+
+  // do fight win update
   const fightWins = await getFightWinLeaderboard();
 
   await DB.$leaderboard.replaceOne(
@@ -50,6 +52,7 @@ exports.task = async () => {
     { upsert: true }
   );
 
+  // do fight loss update
   const fightLosses = await getFightLossLeaderboard();
 
   await DB.$leaderboard.replaceOne(

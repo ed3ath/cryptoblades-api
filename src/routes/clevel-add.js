@@ -10,7 +10,7 @@ exports.route = (app) => {
     }
 
     try {
-      await DB.$clevels.replaceOne({ hash }, { hash, accountAddress, charId, level, gas }, { upsert: true });
+      await DB.$clevels.replaceOne({ hash }, { hash, accountAddress, charId, level: +level, gas }, { upsert: true });
     } catch(error) {
       return res.status(500).json({ error })
     }
