@@ -18,8 +18,11 @@ All routes that involve adding data take `secret` as a URL parameter. This must 
 ### Getters
 
 - GET `/characters/name/:id` - get character name by id
+- GET `/weapons/name/:id` - get weapon name by id
 
 ### Transactions
+
+Every endpoint additionally supports `gas` for logging and analytics purposes only.
 
 - GET `/leaderboard/fight/add` - pass `hash`, `accountAddress`, `characterId`, `characterLevel`, `weaponId`, `enemyId`, `wonFight`, `enemyRoll`, `playerRoll`, `xpGain`, `skillGain`
 - GET `/leaderboard/weapon/mint/add` - pass `hash`, `accountAddress`, `weaponId`
