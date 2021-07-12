@@ -39,6 +39,36 @@ const getFightLossLeaderboard = async () => {
   }));
 };
 
+const getForges = async () => {
+  const forgeLeaderboard = await DB.$wmints.aggregate([
+    { $group: { _id: '$accountAddress', count: { $sum: 1 } } },
+
+    { $sort: { count: -1 } },
+
+    { $limit: LEADERBOARD_MAX }
+  ]).toArray();
+
+  return forgeLeaderboard.map(x => ({
+    name: x._id,
+    value: x.count
+  }));
+};
+
+const getReforges = async () => {
+  const reforgeLeaderboard = await DB.$wmints.aggregate([
+    { $group: { _id: '$accountAddress', count: { $sum: 1 } } },
+
+    { $sort: { count: -1 } },
+
+    { $limit: LEADERBOARD_MAX }
+  ]).toArray();
+
+  return reforgeLeaderboard.map(x => ({
+    name: x._id,
+    value: x.count
+  }));
+};
+
 exports.duration = process.env.NODE_ENV === 'production' ? 900 :  5;
 
 exports.task = async () => {
@@ -60,4 +90,23 @@ exports.task = async () => {
     { key: 'Fights Lost', units: 'Lost', leaderboard: fightLosses }, 
     { upsert: true }
   );
+
+  // count forges
+  const forges = await getForges();
+
+  await DB.$leaderboard.replaceOne(
+    { key: 'Weapons Forged' }, 
+    { key: 'Weapons Forged', units: 'Forged', leaderboard: forges }, 
+    { upsert: true }
+  );
+
+  // count reforges
+  const reforges = await getForges();
+
+  await DB.$leaderboard.replaceOne(
+    { key: 'Weapon Reforges' }, 
+    { key: 'Weapon Reforges', units: 'Reforged', leaderboard: reforges }, 
+    { upsert: true }
+  );
+
 };
