@@ -18,7 +18,7 @@ const getFightWinLeaderboard = async () => {
 
   return fightWinLeaderboard.map(x => ({
     name: `${getCharacterNameFromSeed(x._id)} (ID ${x._id})`,
-    value: x.count,
+    value: x.count + 1,
     characterId: x._id
   }));
 };
@@ -71,6 +71,22 @@ const getReforges = async () => {
   }));
 };
 
+const getLevels = async () => {
+  const levelLeaderboard = await DB.$clevels.aggregate([
+    { $group: { _id: '$charId', count: { $sum: 1 } } },
+
+    { $sort: { count: -1 } },
+
+    { $limit: LEADERBOARD_MAX }
+  ]).toArray();
+
+  return levelLeaderboard.map(x => ({
+    name: `${getCharacterNameFromSeed(x._id)} (ID ${x._id})`,
+    value: x.count,
+    characterId: x._id
+  }));
+};
+
 exports.duration = process.env.NODE_ENV === 'production' ? 900 :  5;
 
 exports.task = async () => {
@@ -108,6 +124,15 @@ exports.task = async () => {
   await DB.$leaderboard.replaceOne(
     { key: 'Weapon Reforges' }, 
     { key: 'Weapon Reforges', units: 'Reforged', leaderboard: reforges }, 
+    { upsert: true }
+  );
+
+  // count levelups
+  const levelups = await getLevels();
+
+  await DB.$leaderboard.replaceOne(
+    { key: 'Highest Level' }, 
+    { key: 'Highest Level', units: '', leaderboard: levelups }, 
     { upsert: true }
   );
 
