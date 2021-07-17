@@ -36,6 +36,11 @@ const unless = (path, middleware) => {
 const startApp = () => {
   const app = express();
 
+  app.use(require('express-rate-limit')({
+    windowMs: 1000 * 15,
+    max: 10
+  }));
+
   app.use(require('body-parser').json());
   app.use(require('cors')());
 
