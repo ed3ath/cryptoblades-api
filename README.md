@@ -41,8 +41,8 @@ Every endpoint additionally supports `gas` for logging and analytics purposes on
 
 #### Marketplace
 - GET `/market/character` - pass `element` (string), `minLevel` (num), `maxLevel` (num), `sortBy` (string; any character key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0)
-- PUT `/market/character/:hash` - pass `price` (number), `charId` (string), `charLevel` (num), `charElement` (string), `timestamp` (number)
-- DELETE `/market/character/:hash` 
+- PUT `/market/character/:charId` - pass `price`, (number), `charLevel` (num), `charElement` (string), `timestamp` (number), `sellerAddress` (string)
+- DELETE `/market/character/:charId` 
 - GET `/market/weapon` - pass `element` (string), `minStars` (num), `maxStars` (num), `sortBy` (string; any weapon key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0)
-- PUT `/market/weapon/:hash`
-- DELETE `/market/weapon/:hash` - pass `price` (number), `weaponId` (string), `weaponStars` (num), `weaponElement` (string), `timestamp` (number)
+- PUT `/market/weapon/:weaponId` - pass `price`, (string), `weaponStars` (num), `weaponElement` (string), `timestamp` (number), `sellerAddress` (string)
+- DELETE `/market/weapon/:weaponId` 

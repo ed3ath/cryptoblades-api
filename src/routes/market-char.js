@@ -27,7 +27,7 @@ exports.route = (app) => {
     pageNum = pageNum || 0;
 
     // build a query
-    const query = { type: 'character' };
+    const query = { };
 
     if(element) query.charElement = element;
     if(minLevel || maxLevel) {
@@ -48,7 +48,7 @@ exports.route = (app) => {
 
     // get and send results
     try {
-      const resultsCursor = await DB.$market.find(
+      const resultsCursor = await DB.$marketCharacters.find(
         query,
         options
       );
@@ -72,17 +72,17 @@ exports.route = (app) => {
     
   });
 
-  app.put('/market/character/:hash', async (req, res) => {
+  app.put('/market/character/:charId', async (req, res) => {
 
-    const { hash } = req.params;
-    const { price, charId, charLevel, charElement, timestamp } = req.body;
+    const { charId } = req.params;
+    const { price, charLevel, charElement, timestamp, sellerAddress } = req.body;
 
-    if(!hash || !price || !charId || !charLevel || !charElement || !timestamp) {
-      return res.status(400).json({ error: 'Invalid body. Must pass hash, price, charId, charLevel, charElement, timestamp.' });
+    if(!price || !charId || !charLevel || !charElement || !timestamp || !sellerAddress) {
+      return res.status(400).json({ error: 'Invalid body. Must pass price, charId, charLevel, charElement, timestamp.' });
     }
 
     try {
-      await DB.$market.replaceOne({ hash }, { type: 'character', hash, price, charId, charLevel, charElement, timestamp }, { upsert: true });
+      await DB.$marketCharacters.replaceOne({ charId }, { price, charId, charLevel, charElement, timestamp, sellerAddress }, { upsert: true });
     } catch(error) {
       console.error(error);
       return res.status(500).json({ error })
@@ -92,16 +92,16 @@ exports.route = (app) => {
     
   });
 
-  app.delete('/market/character/:hash', async (req, res) => {
+  app.delete('/market/character/:charId', async (req, res) => {
 
-    const { hash } = req.params;
+    const { charId } = req.params;
 
-    if(!hash) {
-      return res.status(400).json({ error: 'Invalid hash.' });
+    if(!charId) {
+      return res.status(400).json({ error: 'Invalid charId.' });
     }
 
     try {
-      await DB.$market.removeOne({ hash });
+      await DB.$marketCharacters.removeOne({ charId });
     } catch(error) {
       console.error(error);
       return res.status(500).json({ error })

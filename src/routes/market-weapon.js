@@ -27,7 +27,7 @@ exports.route = (app) => {
     pageNum = pageNum || 0;
 
     // build a query
-    const query = { type: 'weapon' };
+    const query = { };
 
     if(element) query.weaponElement = element;
     if(minStars || minStars) {
@@ -48,7 +48,7 @@ exports.route = (app) => {
 
     // get and send results
     try {
-      const resultsCursor = await DB.$market.find(
+      const resultsCursor = await DB.$marketWeapons.find(
         query,
         options
       );
@@ -72,17 +72,17 @@ exports.route = (app) => {
     
   });
 
-  app.put('/market/weapon/:hash', async (req, res) => {
+  app.put('/market/weapon/:weaponId', async (req, res) => {
 
-    const { hash } = req.params;
-    const { price, weaponId, weaponStars, weaponElement, timestamp } = req.body;
+    const { weaponId } = req.params;
+    const { price, weaponStars, weaponElement, timestamp, sellerAddress } = req.body;
 
-    if(!hash || !price || !weaponId || !weaponStars || !weaponElement || !timestamp) {
-      return res.status(400).json({ error: 'Invalid body. Must pass hash, price, weaponId, weaponStars, weaponElement, timestamp.' });
+    if(!price || !weaponId || !weaponStars || !weaponElement || !timestamp || !sellerAddress) {
+      return res.status(400).json({ error: 'Invalid body. Must pass price, weaponId, weaponStars, weaponElement, timestamp, sellerAddress.' });
     }
 
     try {
-      await DB.$market.replaceOne({ hash }, { type: 'weapon', hash, price, weaponId, weaponStars, weaponElement, timestamp }, { upsert: true });
+      await DB.$marketWeapons.replaceOne({ weaponId }, { price, weaponId, weaponStars, weaponElement, timestamp, sellerAddress }, { upsert: true });
     } catch(error) {
       console.error(error);
       return res.status(500).json({ error })
@@ -92,16 +92,16 @@ exports.route = (app) => {
     
   });
 
-  app.delete('/market/weapon/:hash', async (req, res) => {
+  app.delete('/market/weapon/:weaponId', async (req, res) => {
 
-    const { hash } = req.params;
+    const { weaponId } = req.params;
 
-    if(!hash) {
-      return res.status(400).json({ error: 'Invalid hash.' });
+    if(!weaponId) {
+      return res.status(400).json({ error: 'Invalid weaponId.' });
     }
 
     try {
-      await DB.$market.removeOne({ hash });
+      await DB.$marketWeapons.removeOne({ weaponId });
     } catch(error) {
       console.error(error);
       return res.status(500).json({ error })

@@ -38,8 +38,11 @@ class Database {
         this.$marketcancels = db.collection('leaderboard-marketcancels');
         this.$marketchanges = db.collection('leaderboard-marketchanges');
 
-        this.$market = db.collection('marketboard');
-        this.$market.createIndex({ type: 1 })
+        this.$marketCharacters = db.collection('marketboard-characters');
+        this.$marketCharacters.createIndex({ charId: 1 })
+
+        this.$marketWeapons = db.collection('marketboard-weapons');
+        this.$marketWeapons.createIndex({ weaponId: 1 })
 
         Object.keys(this).forEach(key => {
           if(!key.startsWith('$')) return;
