@@ -92,6 +92,26 @@ exports.route = (app) => {
     
   });
 
+  app.get('/market/weapon/:weaponId/sell', async (req, res) => {
+
+    const { weaponId } = req.params;
+
+    if(!weaponId) {
+      return res.status(400).json({ error: 'Invalid weaponId.' });
+    }
+
+    try {
+      const currentMarketEntry = await DB.$marketWeapons.findOne({ weaponId });
+      await DB.$marketSales.insert({ type: 'weapon', ...currentMarketEntry });
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({ error })
+    }
+
+    res.json({ sold: true });
+
+  });
+
   app.delete('/market/weapon/:weaponId', async (req, res) => {
 
     const { weaponId } = req.params;
