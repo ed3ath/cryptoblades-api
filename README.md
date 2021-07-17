@@ -25,6 +25,7 @@ All routes that involve adding data take `secret` as a URL parameter. This must 
 
 Every endpoint additionally supports `gas` for logging and analytics purposes only.
 
+#### Leaderboard
 - GET `/leaderboard/fight/add` - pass `hash`, `accountAddress`, `characterId`, `characterLevel`, `weaponId`, `enemyId`, `wonFight`, `enemyRoll`, `playerRoll`, `xpGain`, `skillGain`
 - GET `/leaderboard/weapon/mint/add` - pass `hash`, `accountAddress`, `weaponId`
 - GET `/leaderboard/weapon/reforge/add` - pass `hash`, `accountAddress`, `weaponId`, `burnId`
@@ -34,4 +35,14 @@ Every endpoint additionally supports `gas` for logging and analytics purposes on
 - GET `/leaderboard/market/change/add` - pass `hash`, `accountAddress`, `nftAddress`, `nftId`, `price`
 - GET `/leaderboard/market/sell/add` - pass `hash`, `accountAddress`, `buyerAddress`, `nftAddress`, `nftId`, `price`
 - GET `/leaderboard/market/cancel/add` - pass `hash`, `accountAddress`, `nftAddress`, `nftId`
+
+#### WAX
 - GET `/wax/add` - pass `waxWallet`, `bscWallet` (optional), `waxAmount`, `waxChainTransactionId`, `waxChainBlockNumber`, `bscTransactionId` as URL parameters
+
+#### Marketplace
+- GET `/market/character` - pass `element` (string), `minLevel` (num), `maxLevel` (num), `sortBy` (string; any character key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0)
+- PUT `/market/character/:hash` - pass `price` (number), `charId` (string), `charLevel` (num), `charElement` (string), `timestamp` (number)
+- DELETE `/market/character/:hash` 
+- GET `/market/weapon` - pass `element` (string), `minStars` (num), `maxStars` (num), `sortBy` (string; any weapon key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0)
+- PUT `/market/weapon/:hash`
+- DELETE `/market/weapon/:hash` - pass `price` (number), `weaponId` (string), `weaponStars` (num), `weaponElement` (string), `timestamp` (number)
