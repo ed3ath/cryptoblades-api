@@ -75,14 +75,14 @@ exports.route = (app) => {
   app.put('/market/weapon/:weaponId', async (req, res) => {
 
     const { weaponId } = req.params;
-    const { price, weaponStars, weaponElement, timestamp, sellerAddress } = req.body;
+    const { price, weaponStars, weaponElement, stat1Element, stat1Value, stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress } = req.body;
 
-    if(!price || !weaponId || !weaponStars || !weaponElement || !timestamp || !sellerAddress) {
-      return res.status(400).json({ error: 'Invalid body. Must pass price, weaponId, weaponStars, weaponElement, timestamp, sellerAddress.' });
+    if(!price || !weaponId || !weaponStars || !weaponElement || !stat1Element || !stat1Value || !stat2Element || !stat2Value || !stat3Element || !stat3Value || !timestamp || !sellerAddress) {
+      return res.status(400).json({ error: 'Invalid body. Must pass price, weaponId, weaponStars, weaponElement, stat1Element, stat1Value, stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress.' });
     }
 
     try {
-      await DB.$marketWeapons.replaceOne({ weaponId }, { price, weaponId, weaponStars, weaponElement, timestamp, sellerAddress }, { upsert: true });
+      await DB.$marketWeapons.replaceOne({ weaponId }, { price, weaponId, weaponStars, weaponElement, stat1Element, stat1Value, stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress }, { upsert: true });
     } catch(error) {
       console.error(error);
       return res.status(500).json({ error })
