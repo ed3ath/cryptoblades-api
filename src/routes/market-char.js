@@ -5,9 +5,10 @@ exports.route = (app) => {
   app.get('/market/character', async (req, res) => {
 
     // clean incoming params
-    let { element, minLevel, maxLevel, sortBy, sortDir, pageSize, pageNum } = req.query;
+    let { element, minLevel, maxLevel, sortBy, sortDir, pageSize, pageNum, sellerAddress } = req.query;
     
     element = element || '';
+    sellerAddress = sellerAddress || '';
     
     if(minLevel) minLevel = +minLevel;
     minLevel = minLevel || 1;
@@ -30,6 +31,7 @@ exports.route = (app) => {
     const query = { };
 
     if(element) query.charElement = element;
+    if(sellerAddress) query.sellerAddress = sellerAddress;
     if(minLevel || maxLevel) {
       query.charLevel = {};
       if(minLevel) query.charLevel.$gte = minLevel;
@@ -78,7 +80,7 @@ exports.route = (app) => {
     const { price, charLevel, charElement, timestamp, sellerAddress } = req.body;
 
     if(!price || !charId || !charLevel || !charElement || !timestamp || !sellerAddress) {
-      return res.status(400).json({ error: 'Invalid body. Must pass price, charId, charLevel, charElement, timestamp.' });
+      return res.status(400).json({ error: 'Invalid body. Must pass price, charId, charLevel, charElement, timestamp, sellerAddress.' });
     }
 
     try {

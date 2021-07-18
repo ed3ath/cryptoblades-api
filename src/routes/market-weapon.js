@@ -5,9 +5,10 @@ exports.route = (app) => {
   app.get('/market/weapon', async (req, res) => {
 
     // clean incoming params
-    let { element, minStars, maxStars, sortBy, sortDir, pageSize, pageNum } = req.query;
+    let { element, minStars, maxStars, sortBy, sortDir, pageSize, pageNum, sellerAddress } = req.query;
     
     element = element || '';
+    sellerAddress = sellerAddress || '';
     
     if(minStars) minStars = +minStars;
     minStars = minStars || 1;
@@ -30,6 +31,7 @@ exports.route = (app) => {
     const query = { };
 
     if(element) query.weaponElement = element;
+    if(sellerAddress) query.sellerAddress = sellerAddress;
     if(minStars || minStars) {
       query.weaponStars = {};
       if(minStars) query.weaponStars.$gte = minStars;
