@@ -62,6 +62,7 @@ exports.route = (app) => {
 
       res.json({ 
         results,
+        idResults: results.map(x => x.weaponId),
         page: {
           curPage: pageNum,
           curOffset: pageNum * pageSize,
