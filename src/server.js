@@ -23,28 +23,38 @@ const startTasks = () => {
 };
 
 // express related
-const unless = (path, middleware) => {
+const notmatches = (path, middleware) => {
   return (req, res, next) => {
       if (req.path.includes(path)) {
           return next();
-      } else {
-          return middleware(req, res, next);
       }
+
+      return middleware(req, res, next);
+  };
+};
+
+const matches = (path, middleware) => {
+  return (req, res, next) => {
+      if (req.path.includes(path)) {
+          return next();
+      }
+
+      return middleware(req, res, next);
   };
 };
 
 const startApp = () => {
   const app = express();
 
-  app.use(require('express-rate-limit')({
+  app.use(matches('/static', require('express-rate-limit')({
     windowMs: 1000 * 15,
     max: 10
-  }));
+  })));
 
   app.use(require('body-parser').json());
   app.use(require('cors')());
 
-  app.use(unless('/static', secretCheck));
+  app.use(notmatches('/static', secretCheck));
 
   const port = process.env.PORT || 3000;
   app.listen(port, () => {
