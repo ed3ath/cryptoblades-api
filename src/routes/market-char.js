@@ -57,12 +57,16 @@ exports.route = (app) => {
   
       const results = await resultsCursor.toArray();
 
+      const totalDocuments = await DB.$marketCharacters.count();
+      const numPages = Math.floor(totalDocuments / pageSize);
+
       res.json({ 
         results,
         page: {
           curPage: pageNum,
           curOffset: pageNum * pageSize,
-          pageSize: pageSize,
+          pageSize,
+          numPages
         }  
       });
     } catch(error) {
