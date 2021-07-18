@@ -65,7 +65,7 @@ exports.route = (app) => {
         page: {
           curPage: pageNum,
           curOffset: pageNum * pageSize,
-          total: totalDocuments.length,
+          total: totalDocuments,
           pageSize,
           numPages
         }  
