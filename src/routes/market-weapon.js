@@ -79,8 +79,8 @@ exports.route = (app) => {
     const { weaponId } = req.params;
     const { price, weaponStars, weaponElement, stat1Element, stat1Value, stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress } = req.body;
 
-    if(!price || !weaponId || !weaponStars || !weaponElement || !stat1Element || !stat1Value || !stat2Element || !stat2Value || !stat3Element || !stat3Value || !timestamp || !sellerAddress) {
-      return res.status(400).json({ error: 'Invalid body. Must pass price, weaponId, weaponStars, weaponElement, stat1Element, stat1Value, stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress.' });
+    if(!price || !weaponId || !weaponStars || !weaponElement || !stat1Element || !stat1Value || !timestamp || !sellerAddress) {
+      return res.status(400).json({ error: 'Invalid body. Must pass price, weaponId, weaponStars, weaponElement, stat1Element, stat1Value, timestamp, sellerAddress.' });
     }
 
     try {
