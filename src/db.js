@@ -45,7 +45,9 @@ class Database {
         this.$marketWeapons.createIndex({ weaponId: 1 });
 
         this.$marketSales = db.collection('marketboard-sales');
-        this.$marketSales.createIndex({ sellerAddress: 1 })
+        this.$marketSales.createIndex({ sellerAddress: 1 });
+
+        this.$dataPoints = db.collection('datapoints');
 
         Object.keys(this).forEach(key => {
           if(!key.includes('leaderboard-')) return;

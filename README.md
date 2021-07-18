@@ -48,3 +48,9 @@ Every endpoint additionally supports `gas` for logging and analytics purposes on
 - GET `/market/weapon/:weaponId/sell` - mark this as sold (copy the entry from the market weapon collection)
 - DELETE `/market/weapon/:weaponId` 
 - GET `/static/market/transactions/:accountId`
+
+#### Calculated
+- GET `/static/calculated/skill/price` - current SKILL price in USD
+- POST `/calculated/skill/price` - pass `price` (number), `timestamp` (optional, number)
+- GET `/static/calculated/skill/circulating` - current SKILL price in USD
+- POST `/calculated/skill/circulating` - pass `total` (number), `timestamp` (optional, number)
