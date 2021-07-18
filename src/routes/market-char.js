@@ -2,7 +2,7 @@
 const { DB } = require('../db');
 
 exports.route = (app) => {
-  app.get('/market/character', async (req, res) => {
+  app.get('/static/market/character', async (req, res) => {
 
     // clean incoming params
     let { element, minLevel, maxLevel, sortBy, sortDir, pageSize, pageNum, sellerAddress } = req.query;

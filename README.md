@@ -13,7 +13,7 @@ Create a `.env` file with the following:
 
 ## Routes
 
-All routes that involve adding data take `secret` as a URL parameter. This must match `API_SECRET` (if set) or the request will fail.
+All routes that are not `/static` take `secret` as a URL parameter. This must match `API_SECRET` (if set) or the request will fail.
 
 ### Getters
 
@@ -38,13 +38,13 @@ Every endpoint additionally supports `gas` for logging and analytics purposes on
 
 #### WAX
 - GET `/wax/add` - pass `waxWallet`, `bscWallet` (optional), `waxAmount`, `waxChainTransactionId`, `waxChainBlockNumber`, `bscTransactionId` as URL parameters
-
 #### Marketplace
-- GET `/market/character` - pass `element` (string), `minLevel` (num), `maxLevel` (num), `sortBy` (string; any character key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0), `sellerAddress`
+- GET `/static/market/character` - pass `element` (string), `minLevel` (num), `maxLevel` (num), `sortBy` (string; any character key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0), `sellerAddress`
 - PUT `/market/character/:charId` - pass `price`, (number), `charLevel` (num), `charElement` (string), `timestamp` (number), `sellerAddress` (string)
 - GET `/market/character/:charId/sell` - mark this as sold (copy the entry from the market character collection)
 - DELETE `/market/character/:charId` 
-- GET `/market/weapon` - pass `element` (string), `minStars` (num), `maxStars` (num), `sortBy` (string; any weapon key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0), `sellerAddress`
+- GET `/static/market/weapon` - pass `element` (string), `minStars` (num), `maxStars` (num), `sortBy` (string; any weapon key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0), `sellerAddress`
 - PUT `/market/weapon/:weaponId` - pass `price`, (string), `weaponStars` (num), `weaponElement` (string), `stat1Element` (string), `stat1Value` (number), `stat2Element` (string), `stat2Value` (number), `stat3Element` (string), `stat3Value` (number), `timestamp` (number), `sellerAddress` (string)
 - GET `/market/weapon/:weaponId/sell` - mark this as sold (copy the entry from the market weapon collection)
 - DELETE `/market/weapon/:weaponId` 
+- GET `/static/market/transactions/:accountId`
