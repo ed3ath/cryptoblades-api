@@ -68,7 +68,6 @@ exports.route = (app) => {
           total: totalDocuments.length,
           pageSize,
           numPages
-          
         }  
       });
     } catch(error) {
