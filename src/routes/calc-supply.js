@@ -4,9 +4,9 @@ const { DB } = require('../db');
 exports.route = (app) => {
   app.get('/static/calculated/skill/circulating', async (req, res) => {
     const data = await DB.$dataPoints.findOne({ type: 'circulating' }, { sort: { timestamp: -1 } });
-    if(!data) return res.write(603515);
+    if(!data) return res.write('' + 603515);
 
-    return data.total;
+    return res.send('' + data.total);
   });
 
   app.post('/calculated/skill/circulating', async (req, res) => {
@@ -21,5 +21,7 @@ exports.route = (app) => {
     if(!timestamp) timestamp = Date.now();
 
     DB.$dataPoints.insert({ type: 'circulating', total, timestamp });
+
+    return res.json({ added: true });
   });
 }
