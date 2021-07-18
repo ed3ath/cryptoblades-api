@@ -48,12 +48,7 @@ class Database {
         this.$marketSales.createIndex({ sellerAddress: 1 })
 
         Object.keys(this).forEach(key => {
-          if(!key.startsWith('$')) return;
-          if(key === '$log' 
-          || key === '$leaderboard'
-          || key === '$marketCharacters'
-          || key === '$marketWeapons'
-          || key === '$marketSales') return;
+          if(!key.includes('leaderboard-')) return;
 
           this[key].createIndex({ hash: 1 }, { unique: true });
         });
