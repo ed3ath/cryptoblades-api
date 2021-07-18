@@ -1,5 +1,5 @@
 {
-  "name": "cryptoblades-waxapi",
+  "name": "cryptoblades-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,13 +9,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cryptoblades/cryptoblades-waxapi.git"
+    "url": "git+https://github.com/cryptoblades/cryptoblades-api.git"
   },
   "author": "",
   "bugs": {
-    "url": "https://github.com/cryptoblades/cryptoblades-waxapi/issues"
+    "url": "https://github.com/cryptoblades/cryptoblades-api/issues"
   },
-  "homepage": "https://github.com/cryptoblades/cryptoblades-waxapi#readme",
+  "homepage": "https://github.com/cryptoblades/cryptoblades-api#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
