@@ -16,9 +16,11 @@ const getFightWinLeaderboard = async () => {
     { $limit: LEADERBOARD_MAX }
   ]).toArray();
 
+  const total = await DB.$fights.find({ wonFight: 'true' }).count();
+
   return fightWinLeaderboard.map(x => ({
     name: `${getCharacterNameFromSeed(x._id)} (ID ${x._id})`,
-    value: x.count + 1,
+    value: `${x.count} (${((x.count) / total * 100).toFixed(5)}%)`,
     characterId: x._id
   }));
 };
@@ -34,9 +36,11 @@ const getFightLossLeaderboard = async () => {
     { $limit: LEADERBOARD_MAX }
   ]).toArray();
 
+  const total = await DB.$fights.find({ wonFight: 'false' }).count();
+
   return fightLossLeaderboard.map(x => ({
     name: `${getCharacterNameFromSeed(x._id)} (ID ${x._id})`,
-    value: x.count,
+    value: `${x.count} (${((x.count) / total * 100).toFixed(5)}%)`,
     characterId: x._id
   }));
 };
@@ -50,9 +54,11 @@ const getForges = async () => {
     { $limit: LEADERBOARD_MAX }
   ]).toArray();
 
+  const total = await DB.$wmints.count();
+
   return forgeLeaderboard.map(x => ({
     name: x._id,
-    value: x.count
+    value: `${x.count} (${((x.count) / total * 100).toFixed(5)}%)`,
   }));
 };
 
@@ -65,9 +71,11 @@ const getReforges = async () => {
     { $limit: LEADERBOARD_MAX }
   ]).toArray();
 
+  const total = await DB.$reforges.count();
+
   return reforgeLeaderboard.map(x => ({
     name: x._id,
-    value: x.count
+    value: `${x.count} (${((x.count) / total * 100).toFixed(5)}%)`,
   }));
 };
 
