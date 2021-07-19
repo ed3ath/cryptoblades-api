@@ -51,18 +51,12 @@ exports.route = (app) => {
 
     // get and send results
     try {
-      const resultsCursor = await DB.$marketWeapons.find(
-        query,
-        options
-      );
-
-      const allResultsCursor = await DB.$marketWeapons.find(
-        query
-      );
+      const resultsCursor = await DB.$marketWeapons.find(query, options);
+      const allResultsCursor = await DB.$marketWeapons.find(query);
   
       const results = await resultsCursor.toArray();
 
-      const totalDocuments = allResultsCursor.count();
+      const totalDocuments = await allResultsCursor.count();
       const numPages = Math.floor(totalDocuments / pageSize);
 
       res.json({ 
