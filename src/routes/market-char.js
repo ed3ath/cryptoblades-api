@@ -55,10 +55,14 @@ exports.route = (app) => {
         query,
         options
       );
+
+      const allResultsCursor = await DB.$marketCharacters.find(
+        query
+      );
   
       const results = await resultsCursor.toArray();
 
-      const totalDocuments = await DB.$marketCharacters.count();
+      const totalDocuments = allResultsCursor.count();
       const numPages = Math.floor(totalDocuments / pageSize);
 
       res.json({ 
