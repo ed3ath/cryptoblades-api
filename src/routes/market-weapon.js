@@ -33,7 +33,7 @@ exports.route = (app) => {
 
     if(element) query.weaponElement = element;
     if(sellerAddress) query.sellerAddress = sellerAddress;
-    if(minStars || minStars) {
+    if(minStars || maxStars) {
       query.weaponStars = {};
       if(minStars) query.weaponStars.$gte = minStars;
       if(maxStars) query.weaponStars.$lte = maxStars;
@@ -55,10 +55,14 @@ exports.route = (app) => {
         query,
         options
       );
+
+      const allResultsCursor = await DB.$marketWeapons.find(
+        query
+      );
   
       const results = await resultsCursor.toArray();
 
-      const totalDocuments = await DB.$marketWeapons.count();
+      const totalDocuments = allResultsCursor.count();
       const numPages = Math.floor(totalDocuments / pageSize);
 
       res.json({ 
