@@ -54,3 +54,9 @@ Every endpoint additionally supports `gas` for logging and analytics purposes on
 - POST `/calculated/skill/price` - pass `price` (number), `timestamp` (optional, number)
 - GET `/static/calculated/skill/circulating` - current SKILL price in USD
 - POST `/calculated/skill/circulating` - pass `total` (number), `timestamp` (optional, number)
+- GET `/static/calculated/skill/contract` - current SKILL in dev contract
+- POST `/calculated/skill/contract` - pass `total` (number), `timestamp` (optional, number)
+- GET `/static/calculated/skill/holders` - current number of SKILL holders
+- POST `/calculated/skill/holders` - pass `total` (number), `timestamp` (optional, number)
+- GET `/static/calculated/skill/liquidity` - current liquidity value
+- POST `/calculated/skill/liquidity` - pass `total` (number), `timestamp` (optional, number)
