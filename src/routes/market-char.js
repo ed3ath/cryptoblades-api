@@ -1,8 +1,19 @@
 
 const { DB } = require('../db');
+const { redis } = require('../helpers/redis-helper');
 
 exports.route = (app) => {
   app.get('/static/market/character', async (req, res) => {
+    
+    if(redis) {
+      const cached = await redis.exists(`mchar-${req.url}`);
+      if(cached) {
+        const dataRedis = await redis.get(`mchar-${req.url}`);
+        const data = JSON.parse(dataRedis);
+        res.json(data);
+        return;
+      }
+    }
 
     // clean incoming params
     let { element, minLevel, maxLevel, sortBy, sortDir, pageSize, pageNum, sellerAddress } = req.query;
@@ -59,7 +70,7 @@ exports.route = (app) => {
       const totalDocuments = await allResultsCursor.count();
       const numPages = Math.floor(totalDocuments / pageSize);
 
-      res.json({ 
+      const resData = { 
         results,
         idResults: results.map(x => x.charId),
         page: {
@@ -69,7 +80,11 @@ exports.route = (app) => {
           pageSize,
           numPages
         }  
-      });
+      };
+
+      res.json(resData);
+
+      if(redis) redis.set(`mchar-${req.url}`, JSON.stringify(resData));
     } catch(error) {
 
       console.error(error);

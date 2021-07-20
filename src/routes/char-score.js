@@ -1,5 +1,6 @@
 
 const { DB } = require('../db');
+const { redis } = require('../helpers/redis-helper');
 
 exports.route = (app) => {
   app.get('/static/character/score/:id', async (req, res) => {
@@ -7,6 +8,15 @@ exports.route = (app) => {
     const { id } = req.params;
     if(!id) {
       return res.status(400).json({ error: 'Invalid query. Must pass id.' });
+    }
+
+    if(redis) {
+      const cached = await redis.exists(`hscore-${id}`);
+      if(cached) {
+        const score = await redis.get(`hscore-${id}`);
+        res.json({ score });
+        return;
+      }
     }
     
     const allFightsRes = await DB.$fights.find({ characterId: id });
@@ -37,5 +47,7 @@ exports.route = (app) => {
     });
 
     res.json({ score });
+
+    if(redis) redis.set(`hscore-${id}`, score);
   });
 }
