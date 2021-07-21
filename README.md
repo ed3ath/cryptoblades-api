@@ -20,6 +20,7 @@ All routes that are not `/static` take `secret` as a URL parameter. This must ma
 - GET `/static/leaderboard` - get the entire leaderboard
 - GET `/static/characters/name/:id` - get character name by id
 - GET `/static/weapons/name/:id` - get weapon name by id
+- GET `/notifications` - get all notifications in the last few days
 
 ### Transactions
 
@@ -60,3 +61,5 @@ Every endpoint additionally supports `gas` for logging and analytics purposes on
 - POST `/calculated/skill/holders` - pass `total` (number), `timestamp` (optional, number)
 - GET `/static/calculated/skill/liquidity` - current liquidity value
 - POST `/calculated/skill/liquidity` - pass `total` (number), `timestamp` (optional, number)
+- GET `/static/calculated/skill/total` - current liquidity value
+- POST `/calculated/skill/total` - pass `total` (number), `timestamp` (optional, number)
