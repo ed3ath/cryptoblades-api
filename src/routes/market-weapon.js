@@ -16,10 +16,11 @@ exports.route = (app) => {
     }
 
     // clean incoming params
-    let { element, minStars, maxStars, sortBy, sortDir, pageSize, pageNum, sellerAddress } = req.query;
+    let { element, minStars, maxStars, sortBy, sortDir, pageSize, pageNum, sellerAddress, buyerAddress } = req.query;
     
     element = element || '';
     sellerAddress = sellerAddress || '';
+    buyerAddress = buyerAddress || '';
     
     if(minStars) minStars = +minStars;
     minStars = minStars || 1;
@@ -44,6 +45,7 @@ exports.route = (app) => {
 
     if(element) query.weaponElement = element;
     if(sellerAddress) query.sellerAddress = sellerAddress;
+    if(buyerAddress) query.buyerAddress = buyerAddress;
     if(minStars || maxStars) {
       query.weaponStars = {};
       if(minStars) query.weaponStars.$gte = minStars;
@@ -97,14 +99,14 @@ exports.route = (app) => {
   app.put('/market/weapon/:weaponId', async (req, res) => {
 
     const { weaponId } = req.params;
-    const { price, weaponStars, weaponElement, stat1Element, stat1Value, stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress } = req.body;
+    const { price, weaponStars, weaponElement, stat1Element, stat1Value, stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress, buyerAddress } = req.body;
 
     if(!price || !weaponId || !weaponStars || !weaponElement || !stat1Element || !stat1Value || !timestamp || !sellerAddress) {
       return res.status(400).json({ error: 'Invalid body. Must pass price, weaponId, weaponStars, weaponElement, stat1Element, stat1Value, timestamp, sellerAddress.' });
     }
 
     try {
-      await DB.$marketWeapons.replaceOne({ weaponId }, { price, weaponId, weaponStars, weaponElement, stat1Element, stat1Value, stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress }, { upsert: true });
+      await DB.$marketWeapons.replaceOne({ weaponId }, { price, weaponId, weaponStars, weaponElement, stat1Element, stat1Value, stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress, buyerAddress }, { upsert: true });
     } catch(error) {
       console.error(error);
       return res.status(500).json({ error })
