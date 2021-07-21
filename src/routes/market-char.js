@@ -46,6 +46,7 @@ exports.route = (app) => {
     if(element) query.charElement = element;
     if(sellerAddress) query.sellerAddress = sellerAddress;
     if(buyerAddress) query.buyerAddress = buyerAddress;
+    if(!buyerAddress) query.buyerAddress = { $exists: false };
     if(minLevel || maxLevel) {
       query.charLevel = {};
       if(minLevel) query.charLevel.$gte = minLevel;

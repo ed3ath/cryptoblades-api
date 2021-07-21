@@ -46,6 +46,7 @@ exports.route = (app) => {
     if(element) query.weaponElement = element;
     if(sellerAddress) query.sellerAddress = sellerAddress;
     if(buyerAddress) query.buyerAddress = buyerAddress;
+    if(!buyerAddress) query.buyerAddress = { $exists: false };
     if(minStars || maxStars) {
       query.weaponStars = {};
       if(minStars) query.weaponStars.$gte = minStars;
