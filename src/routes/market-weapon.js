@@ -10,8 +10,10 @@ exports.route = (app) => {
       if(cached) {
         const dataRedis = await redis.get(`mweapon-${req.url}`);
         const data = JSON.parse(dataRedis);
-        res.json(data);
-        return;
+        if(data && data.results && data.results.length > 0) {
+          res.json(data);
+          return;
+        }
       }
     }
 
@@ -46,7 +48,7 @@ exports.route = (app) => {
     if(element) query.weaponElement = element;
     if(sellerAddress) query.sellerAddress = sellerAddress;
     if(buyerAddress) query.buyerAddress = buyerAddress;
-    if(!buyerAddress) query.buyerAddress = { $exists: false };
+    if(!buyerAddress) query.buyerAddress = { $eq: null };
     if(minStars || maxStars) {
       query.weaponStars = {};
       if(minStars) query.weaponStars.$gte = minStars;
