@@ -20,7 +20,7 @@ exports.route = (app) => {
     
     element = element || '';
     sellerAddress = sellerAddress || '';
-    buyerAddress = buyerAddress || ';'
+    buyerAddress = buyerAddress || '';
     
     if(minLevel) minLevel = +minLevel;
     minLevel = minLevel || 1;
@@ -52,7 +52,7 @@ exports.route = (app) => {
       if(minLevel) query.charLevel.$gte = minLevel;
       if(maxLevel) query.charLevel.$lte = maxLevel;
     }
-
+    
     // build options
     const options = {
       skip: pageSize * pageNum,
