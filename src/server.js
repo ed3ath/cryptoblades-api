@@ -1,16 +1,16 @@
-
 const fs = require('fs');
 const express = require('express');
 
 const { DB } = require('./db');
+const { startLogging } = require('./logger');
 const { secretCheck } = require('./middleware/secret');
 
 // cron related
 const startTasks = () => {
   fs.readdir(`${__dirname}/tasks`, (err, files) => {
-    files.forEach(file => {
+    files.forEach((file) => {
       const { duration, task } = require(`${__dirname}/tasks/${file}`);
-      
+
       console.log(`Running ${file}...`);
       task();
 
@@ -23,24 +23,20 @@ const startTasks = () => {
 };
 
 // express related
-const notmatches = (path, middleware) => {
-  return (req, res, next) => {
-      if (req.path.includes(path)) {
-          return next();
-      }
+const notmatches = (path, middleware) => (req, res, next) => {
+  if (req.path.includes(path)) {
+    return next();
+  }
 
-      return middleware(req, res, next);
-  };
+  return middleware(req, res, next);
 };
 
-const matches = (path, middleware) => {
-  return (req, res, next) => {
-      if (req.path.includes(path)) {
-          return next();
-      }
+const matches = (path, middleware) => (req, res, next) => {
+  if (req.path.includes(path)) {
+    return next();
+  }
 
-      return middleware(req, res, next);
-  };
+  return middleware(req, res, next);
 };
 
 const startApp = () => {
@@ -48,7 +44,7 @@ const startApp = () => {
 
   app.use(matches('/static', require('express-rate-limit')({
     windowMs: 1000 * 15,
-    max: 10
+    max: 10,
   })));
 
   app.use(require('body-parser').json());
@@ -58,11 +54,10 @@ const startApp = () => {
 
   const port = process.env.PORT || 3000;
   app.listen(port, () => {
-
-    console.log('API started on port ' + port);
+    console.log(`API started on port ${port}`);
 
     fs.readdir(`${__dirname}/routes`, (err, files) => {
-      files.forEach(file => {
+      files.forEach((file) => {
         require(`${__dirname}/routes/${file}`).route(app);
       });
     });
@@ -73,4 +68,5 @@ const startApp = () => {
 DB.isReady.then(() => {
   startApp();
   startTasks();
+  startLogging();
 });
