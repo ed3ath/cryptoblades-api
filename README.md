@@ -20,6 +20,7 @@ All routes that are not `/static` take `secret` as a URL parameter. This must ma
 - GET `/static/leaderboard` - get the entire leaderboard
 - GET `/static/characters/name/:id` - get character name by id
 - GET `/static/weapons/name/:id` - get weapon name by id
+- GET `/static/fights/:accountAddress` - get fight logs by account address
 - GET `/notifications` - get all notifications in the last few days
 
 ### Transactions
