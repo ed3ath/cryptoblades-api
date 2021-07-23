@@ -1,6 +1,5 @@
-
-const names = require('../data/char-names.json');
 const seedrandom = require('seedrandom');
+const names = require('../data/char-names.json');
 
 const getRandom = (rng, arr) => arr[Math.floor(rng() * arr.length)];
 

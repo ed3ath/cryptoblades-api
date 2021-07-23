@@ -1,4 +1,3 @@
-
 const { DB } = require('../db');
 
 exports.route = (app) => {
@@ -7,4 +6,4 @@ exports.route = (app) => {
     const retData = await data.toArray();
     res.json(retData);
   });
-}
+};
