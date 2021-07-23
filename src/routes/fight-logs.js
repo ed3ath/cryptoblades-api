@@ -17,8 +17,6 @@ exports.route = (app) => {
       return res.status(500).json({ error });
     }
 
-    return res.json(
-      fights.map((fight) => fight),
-    );
+    return res.json(fights);
   });
 };
