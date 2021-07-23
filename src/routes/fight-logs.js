@@ -10,9 +10,15 @@ exports.route = (app) => {
     }
 
     try {
-      const fights = await DB.$fights.find({ accountAddress });
-      return res.json(fights);
+      const resultsCursor = await DB.$fights.find({ accountAddress });
+
+      const results = await resultsCursor.toArray();
+
+      return res.json({
+        results,
+      });
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ error });
     }
   });
