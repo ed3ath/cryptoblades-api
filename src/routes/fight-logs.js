@@ -9,14 +9,11 @@ exports.route = (app) => {
         .json({ error: 'Invalid query. Must pass account address.' });
     }
 
-    let fights;
-
     try {
-      fights = await DB.$fights.find({ accountAddress });
+      const fights = await DB.$fights.find({ accountAddress });
+      return res.json(fights);
     } catch (error) {
       return res.status(500).json({ error });
     }
-
-    return res.json(fights);
   });
 };
