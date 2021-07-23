@@ -13,7 +13,7 @@ exports.route = (app) => {
       const resultsCursor = await DB.$fights.find({ accountAddress });
 
       const results = await resultsCursor.toArray();
-      
+
       return res.json({
         results,
       });
