@@ -110,7 +110,8 @@ exports.route = (app) => {
     try {
       const currentMarketEntry = await DB.$marketCharacters.findOne({ charId });
       if(currentMarketEntry) {
-        await DB.$marketSales.insert({ type: 'character', ...currentMarketEntry });
+        const { _id, ...character } = currentMarketEntry;
+        await DB.$marketSales.insert({ type: 'character', character });
       }
     } catch(error) {
       console.error(error);
