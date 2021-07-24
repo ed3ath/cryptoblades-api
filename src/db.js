@@ -49,6 +49,8 @@ class Database {
 
         this.$dataPoints = db.collection('datapoints');
 
+        this.$notifications = db.collection('notifications');
+
         Object.keys(this).forEach(key => {
           if(!key.includes('leaderboard-')) return;
 

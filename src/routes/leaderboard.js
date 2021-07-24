@@ -1,4 +1,3 @@
-
 const { DB } = require('../db');
 
 exports.route = (app) => {
@@ -8,4 +7,4 @@ exports.route = (app) => {
 
     res.json({ leaderboard });
   });
-}
+};

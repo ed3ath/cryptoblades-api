@@ -20,6 +20,8 @@ All routes that are not `/static` take `secret` as a URL parameter. This must ma
 - GET `/static/leaderboard` - get the entire leaderboard
 - GET `/static/characters/name/:id` - get character name by id
 - GET `/static/weapons/name/:id` - get weapon name by id
+- GET `/static/fights/:accountAddress` - get fight logs by account address
+- GET `/notifications` - get all notifications in the last few days
 
 ### Transactions
 
@@ -40,11 +42,11 @@ Every endpoint additionally supports `gas` for logging and analytics purposes on
 - GET `/wax/add` - pass `waxWallet`, `bscWallet` (optional), `waxAmount`, `waxChainTransactionId`, `waxChainBlockNumber`, `bscTransactionId` as URL parameters
 #### Marketplace
 - GET `/static/market/character` - pass `element` (string), `minLevel` (num), `maxLevel` (num), `sortBy` (string; any character key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0), `sellerAddress`
-- PUT `/market/character/:charId` - pass `price`, (number), `charLevel` (num), `charElement` (string), `timestamp` (number), `sellerAddress` (string)
+- PUT `/market/character/:charId` - pass `price`, (number), `charLevel` (num), `charElement` (string), `timestamp` (number), `sellerAddress` (string), `buyerAddress` (optional, string)
 - GET `/market/character/:charId/sell` - mark this as sold (copy the entry from the market character collection)
 - DELETE `/market/character/:charId` 
 - GET `/static/market/weapon` - pass `element` (string), `minStars` (num), `maxStars` (num), `sortBy` (string; any weapon key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0), `sellerAddress`
-- PUT `/market/weapon/:weaponId` - pass `price`, (string), `weaponStars` (num), `weaponElement` (string), `stat1Element` (string), `stat1Value` (number), `stat2Element` (string), `stat2Value` (number), `stat3Element` (string), `stat3Value` (number), `timestamp` (number), `sellerAddress` (string)
+- PUT `/market/weapon/:weaponId` - pass `price`, (string), `weaponStars` (num), `weaponElement` (string), `stat1Element` (string), `stat1Value` (number), `stat2Element` (string), `stat2Value` (number), `stat3Element` (string), `stat3Value` (number), `timestamp` (number), `sellerAddress` (string), `buyerAddress` (optional, string)
 - GET `/market/weapon/:weaponId/sell` - mark this as sold (copy the entry from the market weapon collection)
 - DELETE `/market/weapon/:weaponId` 
 - GET `/static/market/transactions/:accountId`
@@ -60,3 +62,5 @@ Every endpoint additionally supports `gas` for logging and analytics purposes on
 - POST `/calculated/skill/holders` - pass `total` (number), `timestamp` (optional, number)
 - GET `/static/calculated/skill/liquidity` - current liquidity value
 - POST `/calculated/skill/liquidity` - pass `total` (number), `timestamp` (optional, number)
+- GET `/static/calculated/skill/total` - current liquidity value
+- POST `/calculated/skill/total` - pass `total` (number), `timestamp` (optional, number)
