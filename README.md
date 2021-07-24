@@ -29,7 +29,7 @@ Every endpoint additionally supports `gas` for logging and analytics purposes on
 
 #### Leaderboard
 - GET `/leaderboard/fight/add` - pass `hash`, `accountAddress`, `characterId`, `characterLevel`, `weaponId`, `enemyId`, `wonFight`, `enemyRoll`, `playerRoll`, `xpGain`, `skillGain`
-- GET `/leaderboard/weapon/mint/add` - pass `hash`, `accountAddress`, `weaponId`
+- GET `/leaderboard/weapon/mint/add` - pass `hash`, `accountAddress`, `weaponId`, `stars`
 - GET `/leaderboard/weapon/reforge/add` - pass `hash`, `accountAddress`, `weaponId`, `burnId`
 - GET `/leaderboard/character/mint/add` - pass `hash`, `accountAddress`, `charId`
 - GET `/leaderboard/character/level/add` - pass `hash`, `accountAddress`, `charId`, `level`
@@ -40,6 +40,7 @@ Every endpoint additionally supports `gas` for logging and analytics purposes on
 
 #### WAX
 - GET `/wax/add` - pass `waxWallet`, `bscWallet` (optional), `waxAmount`, `waxChainTransactionId`, `waxChainBlockNumber`, `bscTransactionId` as URL parameters
+
 #### Marketplace
 - GET `/static/market/character` - pass `element` (string), `minLevel` (num), `maxLevel` (num), `sortBy` (string; any character key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0), `sellerAddress`
 - PUT `/market/character/:charId` - pass `price`, (number), `charLevel` (num), `charElement` (string), `timestamp` (number), `sellerAddress` (string), `buyerAddress` (optional, string)
