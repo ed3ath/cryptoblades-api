@@ -7,7 +7,8 @@ const { secretCheck } = require('./middleware/secret');
 
 // cron related
 const startTasks = () => {
-  console.log(process.env.DYNO, typeof process.env.DYNO);
+  if (process.env.DYNO && process.env.DYNO !== 'web.1') return;
+
   fs.readdir(`${__dirname}/tasks`, (err, files) => {
     files.forEach((file) => {
       const { duration, task } = require(`${__dirname}/tasks/${file}`);
