@@ -3,18 +3,6 @@ const { redis } = require('../helpers/redis-helper');
 
 exports.route = (app) => {
   app.get('/static/market/weapon', async (req, res) => {
-    if (redis) {
-      const cached = await redis.exists(`mweapon-${req.url}`);
-      if (cached) {
-        const dataRedis = await redis.get(`mweapon-${req.url}`);
-        const data = JSON.parse(dataRedis);
-        if (data && data.results && data.results.length > 0) {
-          res.json(data);
-          return;
-        }
-      }
-    }
-
     // clean incoming params
     let {
       element, minStars, maxStars, sortBy, sortDir, pageSize, pageNum, sellerAddress, buyerAddress,
@@ -65,6 +53,19 @@ exports.route = (app) => {
       options.sort = { [sortBy]: sortDir };
     }
 
+    const cacheKey = `${JSON.stringify(query)}-${JSON.stringify(options)}`;
+    if (redis) {
+      const cached = await redis.exists(`mweapon-${cacheKey}`);
+      if (cached) {
+        const dataRedis = await redis.get(`mweapon-${cacheKey}`);
+        const data = JSON.parse(dataRedis);
+        if (data && data.results && data.results.length > 0) {
+          res.json(data);
+          return;
+        }
+      }
+    }
+
     // get and send results
     try {
       const resultsCursor = await DB.$marketWeapons.find(query, options);
@@ -88,8 +89,6 @@ exports.route = (app) => {
       };
 
       res.json(resData);
-
-      const cacheKey = `${JSON.stringify(query)}-${JSON.stringify(options)}`;
 
       if (redis) redis.set(`mweapon-${cacheKey}`, JSON.stringify(resData));
     } catch (error) {

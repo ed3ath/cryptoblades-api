@@ -3,18 +3,6 @@ const { redis } = require('../helpers/redis-helper');
 
 exports.route = (app) => {
   app.get('/static/market/character', async (req, res) => {
-    if (redis) {
-      const cached = await redis.exists(`mchar-${req.url}`);
-      if (cached) {
-        const dataRedis = await redis.get(`mchar-${req.url}`);
-        const data = JSON.parse(dataRedis);
-        if (data && data.results && data.results.length > 0) {
-          res.json(data);
-          return;
-        }
-      }
-    }
-
     // clean incoming params
     let {
       element, minLevel, maxLevel, sortBy, sortDir, pageSize, pageNum, sellerAddress, buyerAddress,
@@ -65,6 +53,19 @@ exports.route = (app) => {
       options.sort = { [sortBy]: sortDir };
     }
 
+    const cacheKey = `${JSON.stringify(query)}-${JSON.stringify(options)}`;
+    if (redis) {
+      const cached = await redis.exists(`mchar-${cacheKey}`);
+      if (cached) {
+        const dataRedis = await redis.get(`mchar-${cacheKey}`);
+        const data = JSON.parse(dataRedis);
+        if (data && data.results && data.results.length > 0) {
+          res.json(data);
+          return;
+        }
+      }
+    }
+
     // get and send results
     try {
       const resultsCursor = await DB.$marketCharacters.find(query, options);
@@ -88,8 +89,6 @@ exports.route = (app) => {
       };
 
       res.json(resData);
-
-      const cacheKey = `${JSON.stringify(query)}-${JSON.stringify(options)}`;
 
       if (redis) redis.set(`mchar-${cacheKey}`, JSON.stringify(resData));
     } catch (error) {
