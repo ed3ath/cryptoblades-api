@@ -1,10 +1,10 @@
 const { DB } = require('../db');
 
 exports.route = (app) => {
-  app.get('/leaderboard/weapon/mint/add', async (req, res) => {
+  app.post('/leaderboard/weapon/mint/add', async (req, res) => {
     const {
       hash, accountAddress, weaponId, gas, stars,
-    } = req.query;
+    } = req.body;
     if (!hash || !accountAddress || !weaponId || !stars) {
       return res.status(400).json({ error: 'Invalid query. Must pass hash, accountAddress, weaponId, stars.' });
     }

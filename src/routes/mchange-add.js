@@ -1,10 +1,10 @@
 const { DB } = require('../db');
 
 exports.route = (app) => {
-  app.get('/leaderboard/market/change/add', async (req, res) => {
+  app.post('/leaderboard/market/change/add', async (req, res) => {
     const {
       hash, accountAddress, nftAddress, nftId, price, gas,
-    } = req.query;
+    } = req.body;
     if (!hash || !accountAddress || !nftAddress || !nftId || !price) {
       return res.status(400).json({ error: 'Invalid query. Must pass hash, accountAddress, nftAddress, nftId, price.' });
     }

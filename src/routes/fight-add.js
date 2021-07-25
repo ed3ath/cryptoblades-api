@@ -1,11 +1,11 @@
 const { DB } = require('../db');
 
 exports.route = (app) => {
-  app.get('/leaderboard/fight/add', async (req, res) => {
+  app.post('/leaderboard/fight/add', async (req, res) => {
     const {
       hash, accountAddress, characterId, characterLevel, weaponId,
       enemyId, wonFight, enemyRoll, playerRoll, xpGain, skillGain, gas,
-    } = req.query;
+    } = req.body;
     if (!hash || !accountAddress || !characterId || !characterLevel
      || !weaponId || !enemyId || !wonFight || !enemyRoll || !playerRoll || !xpGain || !skillGain) {
       return res.status(400).json({
