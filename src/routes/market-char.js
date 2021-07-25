@@ -89,7 +89,9 @@ exports.route = (app) => {
 
       res.json(resData);
 
-      if (redis) redis.set(`mchar-${req.url}`, JSON.stringify(resData));
+      const cacheKey = `${JSON.stringify(query)}-${JSON.stringify(options)}`;
+
+      if (redis) redis.set(`mchar-${cacheKey}`, JSON.stringify(resData));
     } catch (error) {
       console.error(error);
       res.status(500).json({ error });
