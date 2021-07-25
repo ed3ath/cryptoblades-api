@@ -40,6 +40,7 @@ class Database {
         this.$marketCharacters = db.collection('marketboard-characters');
         this.$marketCharacters.createIndex({ timestamp: 1 });
         this.$marketCharacters.createIndex({ charId: 1 });
+        this.$marketCharacters.createIndex({ price: 1 });
         this.$marketCharacters.createIndex({ sellerAddress: 1 });
         this.$marketCharacters.createIndex({
           charLevel: 1, charElement: 1, price: 1, buyerAddress: 1,
@@ -48,10 +49,12 @@ class Database {
         this.$marketWeapons = db.collection('marketboard-weapons');
         this.$marketWeapons.createIndex({ timestamp: 1 });
         this.$marketWeapons.createIndex({ weaponId: 1 });
+        this.$marketWeapons.createIndex({ price: 1 });
         this.$marketWeapons.createIndex({ sellerAddress: 1 });
         this.$marketWeapons.createIndex({
           weaponElement: 1, weaponStars: 1, price: 1, buyerAddress: 1,
         });
+        this.$marketWeapons.createIndex({ buyerAddress: 1, weaponStars: 1 });
 
         this.$marketSales = db.collection('marketboard-sales');
         this.$marketSales.createIndex({ sellerAddress: 1 });
