@@ -17,7 +17,7 @@
     "url": "https://github.com/cryptoblades/cryptoblades-api/issues"
   },
   "engines": {
-    "node": "16.x"
+    "node": "16.5.0"
   },
   "homepage": "https://github.com/cryptoblades/cryptoblades-api#readme",
   "dependencies": {
