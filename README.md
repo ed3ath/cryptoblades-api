@@ -13,7 +13,7 @@ Create a `.env` file with the following:
 
 ## Routes
 
-All routes that are not `/static` take `secret` as a URL parameter. This must match `API_SECRET` (if set) or the request will fail.
+All routes that are not `/static` take `secret` as a header - `Authorization: Bearer <secret>`. This must match `API_SECRET` (if set) or the request will fail.
 
 ### Getters
 
@@ -39,7 +39,7 @@ Every endpoint additionally supports `gas` for logging and analytics purposes on
 - POST `/leaderboard/market/cancel/add` - pass `hash`, `accountAddress`, `nftAddress`, `nftId`
 
 #### WAX
-- GET `/wax/add` - pass `waxWallet`, `bscWallet` (optional), `waxAmount`, `waxChainTransactionId`, `waxChainBlockNumber`, `bscTransactionId` as URL parameters
+- POST `/wax/add` - pass `waxWallet`, `bscWallet` (optional), `waxAmount`, `waxChainTransactionId`, `waxChainBlockNumber`, `bscTransactionId` as URL parameters
 
 #### Marketplace
 - GET `/static/market/character` - pass `element` (string), `minLevel` (num), `maxLevel` (num), `sortBy` (string; any character key), `sortDir` (-1 or 1), `pageSize` (default 60), `pageNum` (default 0), `sellerAddress`

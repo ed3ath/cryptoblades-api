@@ -1,7 +1,7 @@
 const { DB } = require('../db');
 
 exports.route = (app) => {
-  app.get('/wax/add', async (req, res) => {
+  app.post('/wax/add', async (req, res) => {
     const {
       waxWallet, bscWallet, waxAmount, waxChainTransactionId,
       waxChainBlockNumber, bscTransactionId, failureReason, gas,
