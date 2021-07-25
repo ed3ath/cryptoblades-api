@@ -44,7 +44,7 @@ const startApp = () => {
 
   app.use(matches('/static', require('express-rate-limit')({
     windowMs: 1000 * 15,
-    max: 10,
+    max: 5,
   })));
 
   app.use(require('body-parser').json());
