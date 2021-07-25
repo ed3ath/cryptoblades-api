@@ -14,10 +14,9 @@ if (!API_SECRET) {
 class Database {
   constructor() {
     this.isReady = new Promise((resolve, reject) => {
+      console.log(`Connecting to Mongo @ ${DB_URI}`);
       const client = new MongoClient(process.env.MONGODB_URI, { useUnifiedTopology: true });
       client.connect().then(() => {
-        console.log(`Connected to ${DB_URI}`);
-
         const db = client.db('cryptoblades');
 
         this.$log = db.collection('log');
