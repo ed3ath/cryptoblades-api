@@ -2,7 +2,6 @@ const fs = require('fs');
 const express = require('express');
 
 const { DB } = require('./db');
-const { startRedis } = require('./helpers/redis-helper');
 const { startLogging } = require('./logger');
 const { secretCheck } = require('./middleware/secret');
 
@@ -71,6 +70,5 @@ const startApp = () => {
 DB.isReady.then(() => {
   startApp();
   startTasks();
-  startRedis();
   startLogging();
 });
