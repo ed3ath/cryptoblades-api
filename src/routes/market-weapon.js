@@ -105,7 +105,9 @@ exports.route = (app) => {
 
     if (!price || !weaponId || !weaponStars || !weaponElement || !stat1Element
      || !stat1Value || !timestamp || !sellerAddress) {
-      return res.status(400).json({ error: 'Invalid body. Must pass price, weaponId, weaponStars, weaponElement, stat1Element, stat1Value, timestamp, sellerAddress.' });
+      return res.status(400).json({
+        error: 'Invalid body. Must pass price, weaponId, weaponStars, weaponElement, stat1Element, stat1Value, timestamp, sellerAddress.',
+      });
     }
 
     try {
