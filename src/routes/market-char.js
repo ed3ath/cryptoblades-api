@@ -90,7 +90,7 @@ exports.route = (app) => {
 
       res.json(resData);
 
-      if (redis) redis.set(`mchar-${cacheKey}`, JSON.stringify(resData), 'ex', 900);
+      if (redis) redis.set(`mchar-${cacheKey}`, JSON.stringify(resData), 'ex', 450);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error });
