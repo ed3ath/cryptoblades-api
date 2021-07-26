@@ -50,6 +50,12 @@ class Database {
         this.$marketCharacters.createIndex({
           charElement: 1, sellerAddress: 1, buyerAddress: 1, price: -1,
         });
+        this.$marketCharacters.createIndex({
+          charElement: 1, sellerAddress: 1, buyerAddress: 1, timestamp: 1,
+        });
+        this.$marketCharacters.createIndex({
+          charElement: 1, sellerAddress: 1, buyerAddress: 1, timestamp: -1,
+        });
         this.$marketCharacters.createIndex({ charElement: 1, buyerAddress: 1, price: 1 });
         this.$marketCharacters.createIndex({ charElement: 1, buyerAddress: 1, price: -1 });
         this.$marketCharacters.createIndex({ buyerAddress: 1, timestamp: 1 });
@@ -74,13 +80,27 @@ class Database {
           weaponElement: 1, sellerAddress: 1, price: 1, buyerAddress: 1,
         });
         this.$marketWeapons.createIndex({
+          sellerAddress: 1, weaponElement: 1, buyerAddress: 1, price: 1,
+        });
+        this.$marketWeapons.createIndex({
+          sellerAddress: 1, weaponElement: 1, buyerAddress: 1, price: -1,
+        });
+        this.$marketWeapons.createIndex({
+          sellerAddress: 1, weaponElement: 1, buyerAddress: 1, timestamp: 1,
+        });
+        this.$marketWeapons.createIndex({
+          sellerAddress: 1, weaponElement: 1, buyerAddress: 1, timestamp: -1,
+        });
+        this.$marketWeapons.createIndex({
           weaponElement: 1, sellerAddress: 1, timestamp: -1, buyerAddress: 1,
         });
         this.$marketWeapons.createIndex({ buyerAddress: 1, weaponStars: 1 });
         this.$marketWeapons.createIndex({ buyerAddress: 1, timestamp: -1 });
         this.$marketWeapons.createIndex({ buyerAddress: 1, timestamp: 1 });
         this.$marketWeapons.createIndex({ buyerAddress: 1, price: 1 });
+        this.$marketWeapons.createIndex({ buyerAddress: 1, price: -1 });
         this.$marketWeapons.createIndex({ sellerAddress: 1, buyerAddress: 1, price: 1 });
+        this.$marketWeapons.createIndex({ sellerAddress: 1, buyerAddress: 1, price: -1 });
         this.$marketWeapons.createIndex({ weaponElement: 1, buyerAddress: 1, price: 1 });
         this.$marketWeapons.createIndex({ weaponElement: 1, buyerAddress: 1, price: -1 });
         this.$marketWeapons.createIndex({ weaponElement: 1, buyerAddress: 1, timestamp: -1 });
