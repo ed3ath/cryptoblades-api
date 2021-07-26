@@ -90,7 +90,7 @@ exports.route = (app) => {
 
       res.json(resData);
 
-      if (redis) redis.set(`mweapon-${cacheKey}`, JSON.stringify(resData));
+      if (redis) redis.set(`mweapon-${cacheKey}`, JSON.stringify(resData), 'ex', 900);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error });
