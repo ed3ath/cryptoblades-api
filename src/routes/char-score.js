@@ -44,7 +44,7 @@ exports.route = (app) => {
       score += mult * comparator;
     });
 
-    if (redis) redis.set(`hscore-${id}`, score);
+    if (redis) redis.set(`hscore-${id}`, score, 'ex', 900);
 
     return res.json({ score });
   });
