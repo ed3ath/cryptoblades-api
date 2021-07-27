@@ -45,7 +45,7 @@ const startApp = () => {
 
   if (redis) {
     const RedisStore = require('rate-limit-redis');
-    rateLimitOpts.store = new RedisStore({ url: process.env.REDIS_URL, db: 2 });
+    rateLimitOpts.store = new RedisStore({ client: redis });
   }
 
   app.use('/static/', require('express-rate-limit')(rateLimitOpts));
