@@ -33,21 +33,13 @@ const notmatches = (path, middleware) => (req, res, next) => {
   return middleware(req, res, next);
 };
 
-const matches = (path, middleware) => (req, res, next) => {
-  if (req.path.includes(path)) {
-    return next();
-  }
-
-  return middleware(req, res, next);
-};
-
 const startApp = () => {
   const app = express();
 
-  app.use(matches('/static', require('express-rate-limit')({
+  app.use('/static/', require('express-rate-limit')({
     windowMs: 1000 * 15,
     max: 5,
-  })));
+  }));
 
   app.use(require('body-parser').json());
   app.use(require('cors')());
