@@ -40,7 +40,7 @@ const startApp = () => {
 
   const rateLimitOpts = {
     windowMs: 1000 * 10,
-    max: 5,
+    max: 10,
   };
 
   if (redis) {
