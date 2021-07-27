@@ -35,6 +35,7 @@ const notmatches = (path, middleware) => (req, res, next) => {
 
 const startApp = () => {
   const app = express();
+  app.set('trust proxy', 1);
 
   app.use('/static/', require('express-rate-limit')({
     windowMs: 1000 * 15,
