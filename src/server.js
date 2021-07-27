@@ -4,6 +4,7 @@ const express = require('express');
 const { DB } = require('./db');
 const { startLogging } = require('./logger');
 const { secretCheck } = require('./middleware/secret');
+const { redis } = require('./helpers/redis-helper');
 
 // cron related
 const startTasks = () => {
@@ -37,10 +38,17 @@ const startApp = () => {
   const app = express();
   app.set('trust proxy', 1);
 
-  app.use('/static/', require('express-rate-limit')({
+  const rateLimitOpts = {
     windowMs: 1000 * 15,
     max: 5,
-  }));
+  };
+
+  if (redis) {
+    const RedisStore = require('rate-limit-redis');
+    rateLimitOpts.store = new RedisStore({ url: process.env.REDIS_URL, db: 2 });
+  }
+
+  app.use('/static/', require('express-rate-limit')(rateLimitOpts));
 
   app.use(require('body-parser').json());
   app.use(require('cors')());
