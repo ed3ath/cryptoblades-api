@@ -51,7 +51,15 @@ const startApp = () => {
   app.use('/static/', require('express-rate-limit')(rateLimitOpts));
 
   app.use(require('body-parser').json());
-  app.use(require('cors')());
+  app.use(require('cors')({
+    origin: (origin, callback) => {
+      if (origin.includes('cryptoblades.io')) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  }));
 
   app.use(notmatches('/static', secretCheck));
 
