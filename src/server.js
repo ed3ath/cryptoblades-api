@@ -39,7 +39,7 @@ const startApp = () => {
   app.set('trust proxy', 1);
 
   const rateLimitOpts = {
-    windowMs: 1000 * 15,
+    windowMs: 1000 * 10,
     max: 5,
   };
 
