@@ -38,6 +38,8 @@ const startApp = () => {
   const app = express();
   app.set('trust proxy', 1);
 
+  app.use(require('cors')());
+
   const rateLimitOpts = {
     windowMs: 1000 * 10,
     max: 10,
@@ -51,7 +53,6 @@ const startApp = () => {
   app.use('/static/', require('express-rate-limit')(rateLimitOpts));
 
   app.use(require('body-parser').json());
-  app.use(require('cors')());
 
   app.use(notmatches('/static', secretCheck));
 
