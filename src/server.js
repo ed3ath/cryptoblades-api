@@ -38,7 +38,27 @@ const startApp = () => {
   const app = express();
   app.set('trust proxy', 1);
 
-  app.use(require('cors')());
+  const allowList = ['https://app.cryptoblades.io', 'https://cryptoblades.io'];
+  const corsOptionsDelegate = (req, callback) => {
+    // check if Origin header is present in the request
+    if (process.env.NODE_ENV === 'production' && req.header('Origin') !== undefined) {
+      // check if Origin header is among the allowed domains
+      if (allowList.indexOf(req.header('Origin')) !== -1) {
+        // reflect (enable) the requested origin in the CORS response
+        corsOptions = { origin: req.header('Origin') }
+      } else {
+        // Origin is present in the request but not in allowList, we want browsers to block this
+        // so respond with one of our allowed Origins
+        corsOptions = { origin: allowList[0] }
+      }
+    } else {
+      // disable CORS for this request
+      corsOptions = { origin: false }
+    }
+    callback(null, corsOptions) // callback expects two parameters: error and options
+  }
+
+  app.use(require('cors')(corsOptionsDelegate));
 
   const rateLimitOpts = {
     windowMs: 1000 * 10,
