@@ -43,7 +43,7 @@ const startApp = () => {
   const rateLimitOpts = {
     windowMs: 1000 * 10,
     max: 10,
-    handler: secretCheck,
+    handler: (req, res, next) => secretCheck(req, res, next, 429),
   };
 
   if (redis) {
