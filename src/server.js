@@ -38,7 +38,7 @@ const startApp = () => {
   const app = express();
   app.set('trust proxy', 1);
 
-  const allowList = ['https://app.cryptoblades.io', 'https://cryptoblades.io'];
+  const allowList = ['https://app.cryptoblades.io', 'https://cryptoblades.io', 'https://test.cryptoblades.io'];
   const corsOptionsDelegate = (req, callback) => {
     // check if Origin header is present in the request
     if (process.env.NODE_ENV === 'production' && req.header('Origin') !== undefined) {
