@@ -172,4 +172,21 @@ exports.route = (app) => {
 
     return res.json({ deleted: true });
   });
+
+  app.delete('/market/weapon/all/:sellerAddress', async (req, res) => {
+    const { sellerAddress } = req.params;
+
+    if (!sellerAddress) {
+      return res.status(400).json({ error: 'Invalid address.' });
+    }
+
+    try {
+      await DB.$marketWeapons.remove({ sellerAddress });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error });
+    }
+
+    return res.json({ deleted: true });
+  });
 };
