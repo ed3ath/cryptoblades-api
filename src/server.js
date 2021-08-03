@@ -4,6 +4,7 @@ const express = require('express');
 const { DB } = require('./db');
 const { startLogging } = require('./logger');
 const { secretCheck } = require('./middleware/secret');
+const { authenticate } = require('./middleware/authenticate');
 const { redis } = require('./helpers/redis-helper');
 
 // cron related
@@ -40,25 +41,27 @@ const startApp = () => {
 
   const allowList = ['https://app.cryptoblades.io', 'https://cryptoblades.io', 'https://test.cryptoblades.io'];
   const corsOptionsDelegate = (req, callback) => {
-    // check if Origin header is present in the request
-    if (process.env.NODE_ENV === 'production' && req.header('Origin') !== undefined) {
-      // check if Origin header is among the allowed domains
+    let corsOptions = {};
+
+    if (process.env.NODE_ENV === 'production' && req.header('Origin')) {
       if (allowList.indexOf(req.header('Origin')) !== -1) {
-        // reflect (enable) the requested origin in the CORS response
-        corsOptions = { origin: req.header('Origin') }
+        corsOptions = { origin: req.header('Origin') };
       } else {
-        // Origin is present in the request but not in allowList, we want browsers to block this
-        // so respond with one of our allowed Origins
-        corsOptions = { origin: allowList[0] }
+        corsOptions = { origin: allowList[0] };
       }
     } else {
       // disable CORS for this request
-      corsOptions = { origin: false }
+      corsOptions = { origin: false };
     }
-    callback(null, corsOptions) // callback expects two parameters: error and options
-  }
 
-  app.use(require('cors')(corsOptionsDelegate));
+    callback(null, corsOptions);
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    app.use(require('cors')(corsOptionsDelegate));
+  } else {
+    app.use(require('cors')());
+  }
 
   const rateLimitOpts = {
     windowMs: 1000 * 10,
@@ -75,6 +78,7 @@ const startApp = () => {
 
   app.use(require('body-parser').json());
 
+  app.use(authenticate);
   app.use(notmatches('/static', secretCheck));
 
   const port = process.env.PORT || 3000;

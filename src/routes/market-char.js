@@ -54,7 +54,9 @@ exports.route = (app) => {
     }
 
     const cacheKey = `${JSON.stringify(query)}-${JSON.stringify(options)}`;
-    if (redis) {
+
+    // only unauthenticated requests hit redis
+    if (redis && !req.isAuthenticated) {
       const cached = await redis.exists(`mchar-${cacheKey}`);
       if (cached) {
         const dataRedis = await redis.get(`mchar-${cacheKey}`);
