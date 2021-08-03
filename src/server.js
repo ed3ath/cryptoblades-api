@@ -39,6 +39,9 @@ const startApp = () => {
   const app = express();
   app.set('trust proxy', 1);
 
+  app.use(authenticate);
+  app.use(notmatches('/static', secretCheck));
+
   const allowList = ['https://app.cryptoblades.io', 'https://cryptoblades.io', 'https://test.cryptoblades.io'];
   const corsOptionsDelegate = (req, callback) => {
     let corsOptions = {};
@@ -77,9 +80,6 @@ const startApp = () => {
   app.use('/static/', require('express-rate-limit')(rateLimitOpts));
 
   app.use(require('body-parser').json());
-
-  app.use(authenticate);
-  app.use(notmatches('/static', secretCheck));
 
   const port = process.env.PORT || 3000;
   app.listen(port, () => {
