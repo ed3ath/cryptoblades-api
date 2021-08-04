@@ -106,6 +106,44 @@ class Database {
         this.$marketWeapons.createIndex({ weaponElement: 1, buyerAddress: 1, timestamp: -1 });
         this.$marketWeapons.createIndex({ sellerAddress: 1, buyerAddress: 1, timestamp: -1 });
 
+        this.$marketShields = db.collection('marketboard-shields');
+        this.$marketShields.createIndex({ timestamp: 1 });
+        this.$marketShields.createIndex({ shieldId: 1 });
+        this.$marketShields.createIndex({ price: 1 });
+        this.$marketShields.createIndex({ sellerAddress: 1 });
+        this.$marketShields.createIndex({
+          shieldElement: 1, shieldStars: 1, price: 1, buyerAddress: 1,
+        });
+        this.$marketShields.createIndex({
+          shieldElement: 1, sellerAddress: 1, price: 1, buyerAddress: 1,
+        });
+        this.$marketShields.createIndex({
+          sellerAddress: 1, shieldElement: 1, buyerAddress: 1, price: 1,
+        });
+        this.$marketShields.createIndex({
+          sellerAddress: 1, shieldElement: 1, buyerAddress: 1, price: -1,
+        });
+        this.$marketShields.createIndex({
+          sellerAddress: 1, shieldElement: 1, buyerAddress: 1, timestamp: 1,
+        });
+        this.$marketShields.createIndex({
+          sellerAddress: 1, shieldElement: 1, buyerAddress: 1, timestamp: -1,
+        });
+        this.$marketShields.createIndex({
+          shieldElement: 1, sellerAddress: 1, timestamp: -1, buyerAddress: 1,
+        });
+        this.$marketShields.createIndex({ buyerAddress: 1, shieldStars: 1 });
+        this.$marketShields.createIndex({ buyerAddress: 1, timestamp: -1 });
+        this.$marketShields.createIndex({ buyerAddress: 1, timestamp: 1 });
+        this.$marketShields.createIndex({ buyerAddress: 1, price: 1 });
+        this.$marketShields.createIndex({ buyerAddress: 1, price: -1 });
+        this.$marketShields.createIndex({ sellerAddress: 1, buyerAddress: 1, price: 1 });
+        this.$marketShields.createIndex({ sellerAddress: 1, buyerAddress: 1, price: -1 });
+        this.$marketShields.createIndex({ shieldElement: 1, buyerAddress: 1, price: 1 });
+        this.$marketShields.createIndex({ shieldElement: 1, buyerAddress: 1, price: -1 });
+        this.$marketShields.createIndex({ shieldElement: 1, buyerAddress: 1, timestamp: -1 });
+        this.$marketShields.createIndex({ sellerAddress: 1, buyerAddress: 1, timestamp: -1 });
+
         this.$marketSales = db.collection('marketboard-sales');
         this.$marketSales.createIndex({ sellerAddress: 1 });
 
