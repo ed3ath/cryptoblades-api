@@ -6,11 +6,18 @@ exports.route = (app) => {
     // clean incoming params
     let {
       element, minStars, maxStars, sortBy, sortDir, pageSize, pageNum, sellerAddress, buyerAddress,
+      minPrice, maxPrice,
     } = req.query;
 
     element = element || '';
     sellerAddress = sellerAddress || '';
     buyerAddress = buyerAddress || '';
+
+    if (minPrice) minPrice = +minPrice;
+    minPrice = Math.max(minPrice, 0);
+
+    if (maxPrice) maxPrice = +maxPrice;
+    maxPrice = Math.max(maxPrice, 0);
 
     if (minStars) minStars = +minStars;
     minStars = minStars || 1;
@@ -41,6 +48,12 @@ exports.route = (app) => {
       query.weaponStars = {};
       if (minStars) query.weaponStars.$gte = minStars;
       if (maxStars) query.weaponStars.$lte = maxStars;
+    }
+
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = minPrice;
+      if (maxPrice) query.price.$lte = maxPrice;
     }
 
     // build options

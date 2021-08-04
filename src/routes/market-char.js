@@ -6,6 +6,7 @@ exports.route = (app) => {
     // clean incoming params
     let {
       element, minLevel, maxLevel, sortBy, sortDir, pageSize, pageNum, sellerAddress, buyerAddress,
+      minPrice, maxPrice,
     } = req.query;
 
     element = element || '';
@@ -17,6 +18,12 @@ exports.route = (app) => {
 
     if (maxLevel) maxLevel = +maxLevel;
     maxLevel = maxLevel || 101;
+
+    if (minPrice) minPrice = +minPrice;
+    minPrice = Math.max(minPrice, 0);
+
+    if (maxPrice) maxPrice = +maxPrice;
+    maxPrice = Math.max(maxPrice, 0);
 
     sortBy = sortBy || 'timestamp';
 
@@ -41,6 +48,12 @@ exports.route = (app) => {
       query.charLevel = {};
       if (minLevel) query.charLevel.$gte = minLevel;
       if (maxLevel) query.charLevel.$lte = maxLevel;
+    }
+
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = minPrice;
+      if (maxPrice) query.price.$lte = maxPrice;
     }
 
     // build options
