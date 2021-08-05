@@ -1,15 +1,15 @@
-const fs = require("fs");
-const express = require("express");
+const fs = require('fs');
+const express = require('express');
 
-const { DB } = require("./db");
-const { startLogging } = require("./logger");
-const { secretCheck } = require("./middleware/secret");
-const { authenticate } = require("./middleware/authenticate");
-const { redis } = require("./helpers/redis-helper");
+const { DB } = require('./db');
+const { startLogging } = require('./logger');
+const { secretCheck } = require('./middleware/secret');
+const { authenticate } = require('./middleware/authenticate');
+const { redis } = require('./helpers/redis-helper');
 
 // cron related
 const startTasks = () => {
-  if (process.env.DYNO && process.env.DYNO !== "web.1") return;
+  if (process.env.DYNO && process.env.DYNO !== 'web.1') return;
 
   fs.readdir(`${__dirname}/tasks`, (err, files) => {
     files.forEach((file) => {
@@ -48,22 +48,22 @@ const notmatches = (path, middleware) => (req, res, next) => {
 
 const startApp = () => {
   const app = express();
-  app.set("trust proxy", 1);
+  app.set('trust proxy', 1);
 
   app.use(authenticate);
-  app.use(notmatches("/static", secretCheck));
+  app.use(notmatches('/static', secretCheck));
 
   const allowList = [
-    "https://app.cryptoblades.io",
-    "https://cryptoblades.io",
-    "https://test.cryptoblades.io",
+    'https://app.cryptoblades.io',
+    'https://cryptoblades.io',
+    'https://test.cryptoblades.io',
   ];
   const corsOptionsDelegate = (req, callback) => {
     let corsOptions = {};
 
-    if (process.env.NODE_ENV === "production" && req.header("Origin")) {
-      if (allowList.indexOf(req.header("Origin")) !== -1) {
-        corsOptions = { origin: req.header("Origin") };
+    if (process.env.NODE_ENV === 'production' && req.header('Origin')) {
+      if (allowList.indexOf(req.header('Origin')) !== -1) {
+        corsOptions = { origin: req.header('Origin') };
       } else {
         corsOptions = { origin: allowList[0] };
       }
@@ -75,10 +75,10 @@ const startApp = () => {
     callback(null, corsOptions);
   };
 
-  if (process.env.NODE_ENV === "production") {
-    app.use(require("cors")(corsOptionsDelegate));
+  if (process.env.NODE_ENV === 'production') {
+    app.use(require('cors')(corsOptionsDelegate));
   } else {
-    app.use(require("cors")());
+    app.use(require('cors')());
   }
 
   const rateLimitOpts = {
@@ -88,13 +88,13 @@ const startApp = () => {
   };
 
   if (redis) {
-    const RedisStore = require("rate-limit-redis");
+    const RedisStore = require('rate-limit-redis');
     rateLimitOpts.store = new RedisStore({ client: redis });
   }
 
-  app.use("/static/", require("express-rate-limit")(rateLimitOpts));
+  app.use('/static/', require('express-rate-limit')(rateLimitOpts));
 
-  app.use(require("body-parser").json());
+  app.use(require('body-parser').json());
 
   const port = process.env.PORT || 3000;
   app.listen(port, () => {
