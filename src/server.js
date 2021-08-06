@@ -15,6 +15,8 @@ const startTasks = () => {
     files.forEach((file) => {
       const { duration, task } = require(`${__dirname}/tasks/${file}`);
 
+      if (duration === -1) return;
+
       console.log(`Running ${file}...`);
       task();
 
@@ -28,10 +30,12 @@ const startTasks = () => {
 
 // listeners
 const startListeners = () => {
+  if (process.env.DYNO && process.env.DYNO !== 'web.1') return;
+
   fs.readdir(`${__dirname}/listeners`, (err, files) => {
     files.forEach((file) => {
       const { listen } = require(`${__dirname}/listeners/${file}`);
-      console.log(`Listener starts ${file}...`);
+      console.log(`Starting listener ${file}...`);
       listen();
     });
   });
@@ -109,7 +113,7 @@ const startApp = () => {
 };
 
 // wait for DB to be ready then go
-DB.isReady.then(() => {
+DB.isReady.then(async () => {
   startApp();
   startTasks();
   startListeners();
