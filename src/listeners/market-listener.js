@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise */
-/* eslint-disable import/no-unresolved */
 
 const ethers = require('ethers');
+const fs = require('fs-extra');
 
 const DB = require('../db');
 const updateABI = require('../tasks/update-abi');
@@ -52,6 +52,14 @@ function getStat3Trait(statPattern) {
 const listen = async () => {
   await updateABI.task();
 
+  if (!fs.existsSync('./src/data/abi/NFTMarket.json')
+   || !fs.existsSync('./src/data/abi/Weapons.json')
+   || !fs.existsSync('./src/data/abi/Characters.json')
+   || !fs.existsSync('./src/data/abi/Shields.json')) {
+    console.error('[MARKET]', 'Could not find some or all ABIs; scraper aborted.');
+    return;
+  }
+
   let nftMarketPlace = null;
   let weapons = null;
   let characters = null;
@@ -59,25 +67,25 @@ const listen = async () => {
 
   nftMarketPlace = new ethers.Contract(
     process.env.ADDRESS_MARKET || '0x90099dA42806b21128A094C713347C7885aF79e2',
-    require('../data/abi/NFTMarket.json').abi,
+    fs.readJSONSync('./src/data/abi/NFTMarket.json').abi,
     provider,
   );
 
   weapons = new ethers.Contract(
     process.env.ADDRESS_WEAPON || '0x7E091b0a220356B157131c831258A9C98aC8031A',
-    require('../data/abi/Weapons.json').abi,
+    fs.readJSONSync('./src/data/abi/Weapons.json').abi,
     provider,
   );
 
   characters = new ethers.Contract(
     process.env.ADDRESS_CHARACTER || '0xc6f252c2CdD4087e30608A35c022ce490B58179b',
-    require('../data/abi/Characters.json').abi,
+    fs.readJSONSync('./src/data/abi/Characters.json').abi,
     provider,
   );
 
   shields = new ethers.Contract(
     process.env.ADDRESS_SHIELD || '0xf9E9F6019631bBE7db1B71Ec4262778eb6C3c520',
-    require('../data/abi/Shields.json').abi,
+    fs.readJSONSync('./src/data/abi/Shields.json').abi,
     provider,
   );
 
