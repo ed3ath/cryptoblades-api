@@ -15,6 +15,8 @@ const startTasks = () => {
     files.forEach((file) => {
       const { duration, task } = require(`${__dirname}/tasks/${file}`);
 
+      if (duration === -1) return;
+
       console.log(`Running ${file}...`);
       task();
 
@@ -22,6 +24,19 @@ const startTasks = () => {
         console.log(`Running ${file}...`);
         task();
       }, duration * 1000);
+    });
+  });
+};
+
+// listeners
+const startListeners = () => {
+  if (process.env.DYNO && process.env.DYNO !== 'web.1') return;
+
+  fs.readdir(`${__dirname}/listeners`, (err, files) => {
+    files.forEach((file) => {
+      const { listen } = require(`${__dirname}/listeners/${file}`);
+      console.log(`Starting listener ${file}...`);
+      listen();
     });
   });
 };
@@ -42,7 +57,11 @@ const startApp = () => {
   app.use(authenticate);
   app.use(notmatches('/static', secretCheck));
 
-  const allowList = ['https://app.cryptoblades.io', 'https://cryptoblades.io', 'https://test.cryptoblades.io'];
+  const allowList = [
+    'https://app.cryptoblades.io',
+    'https://cryptoblades.io',
+    'https://test.cryptoblades.io',
+  ];
   const corsOptionsDelegate = (req, callback) => {
     let corsOptions = {};
 
@@ -94,8 +113,9 @@ const startApp = () => {
 };
 
 // wait for DB to be ready then go
-DB.isReady.then(() => {
+DB.isReady.then(async () => {
   startApp();
   startTasks();
+  startListeners();
   startLogging();
 });
