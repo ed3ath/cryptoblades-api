@@ -1,4 +1,6 @@
 /* eslint-disable no-bitwise */
+/* eslint-disable import/no-unresolved */
+
 const ethers = require('ethers');
 
 const DB = require('../db');
