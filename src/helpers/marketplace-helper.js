@@ -148,7 +148,7 @@ const helpers = {
       const charElement = helpers.traitNumberToName(+character[2]);
 
       const ret = {
-        charId: nftId.toNumber(), charLevel, charElement, price, timestamp, sellerAddress,
+        charId: nftId, charLevel, charElement, price, timestamp, sellerAddress,
       };
 
       return ret;
@@ -171,7 +171,7 @@ const helpers = {
       const stat3Value = weapon._stat3;
 
       const ret = {
-        weaponId: nftId.toNumber(),
+        weaponId: nftId,
         weaponStars,
         weaponElement,
         stat1Element,
@@ -205,7 +205,7 @@ const helpers = {
       const stat3Value = shield._stat3;
 
       return {
-        shieldId: nftId.toNumber(),
+        shieldId: nftId,
         shieldStars,
         shieldElement,
         stat1Element,
