@@ -43,6 +43,26 @@ exports.task = async () => {
     console.table(table);
   };
 
+  const addTransactionBatch = async (nftAddress, itemIds) => {
+    const collection = marketplaceHelper.getCollection(nftAddress);
+    const idKey = marketplaceHelper.getIdKey(nftAddress);
+
+    if (!collection || !idKey) return;
+
+    const currentMarketEntrys = await DB[collection].find({ [idKey]: { $in: itemIds } }).toArray();
+    if (currentMarketEntrys) {
+      const type = marketplaceHelper.getTypeName(nftAddress);
+
+      await DB.$marketSales.insertMany(currentMarketEntrys.map((entry) => {
+        const { _id, ...data } = entry;
+        return {
+          type,
+          [type]: data,
+        };
+      }));
+    }
+  };
+
   const removeBatch = async (nftAddress, itemIds) => {
     const collection = marketplaceHelper.getCollection(nftAddress);
     const idKey = marketplaceHelper.getIdKey(nftAddress);
@@ -63,9 +83,11 @@ exports.task = async () => {
 
     const skip = ITEMS_PER_PAGE * (page);
 
-    const findResult = await DB[collection].find({}, { [idKey]: 1, _id: 0 }).sort({ _id: 1 }).skip(skip).limit(ITEMS_PER_PAGE);
-
-    return findResult.toArray();
+    return DB[collection].find({}, { [idKey]: 1, _id: 0 })
+      .sort({ _id: 1 })
+      .skip(skip)
+      .limit(ITEMS_PER_PAGE)
+      .toArray();
   };
 
   const checkToProcess = (maxLength) => {
@@ -73,7 +95,10 @@ exports.task = async () => {
       if (soldIds[address].length > maxLength) {
         const itemIds = [...soldIds[address]];
         soldIds[address] = [];
-        queue.add(() => removeBatch(address, itemIds));
+        queue.add(async () => {
+          await addTransactionBatch(address, itemIds);
+          await removeBatch(address, itemIds);
+        });
       }
     });
   };
