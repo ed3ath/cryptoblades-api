@@ -43,8 +43,9 @@ const listen = async () => {
 
     const currentMarketEntry = await DB[collection].findOne({ [idKey]: nftId });
     if (currentMarketEntry) {
-      const { _id, ...weapon } = currentMarketEntry;
-      await DB.$marketSales.insert({ type: marketplaceHelper.getTypeName(nftAddress), weapon });
+      const type = marketplaceHelper.getTypeName(nftAddress);
+      const { _id, ...data } = currentMarketEntry;
+      await DB.$marketSales.insert({ type, [type]: data });
     }
   };
 
