@@ -3,6 +3,7 @@
 const ethers = require('ethers');
 const fs = require('fs-extra');
 
+const banned = require('../../banned.json');
 const DB = require('../db');
 const updateABI = require('../tasks/update-abi');
 
@@ -231,6 +232,9 @@ const listen = async () => {
   };
 
   const createOrUpdate = (nftAddress, nftId, price, seller) => {
+    // get outta here
+    if (banned.includes(seller)) return;
+
     const collection = getCollection(nftAddress);
     const data = getNFTData(nftAddress, nftId, price, seller);
     const idKey = getIdKey(nftAddress);
