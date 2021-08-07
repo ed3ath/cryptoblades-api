@@ -68,9 +68,9 @@ exports.task = async () => {
     return findResult.toArray();
   };
 
-  const checkToProcess = () => {
+  const checkToProcess = (maxLength) => {
     tokenAddresses.forEach((address) => {
-      if (soldIds[address].length > 0) {
+      if (soldIds[address].length > maxLength) {
         const itemIds = [...soldIds[address]];
         soldIds[address] = [];
         queue.add(() => removeBatch(address, itemIds));
@@ -101,7 +101,7 @@ exports.task = async () => {
       });
     });
 
-    checkToProcess();
+    checkToProcess(MAX_ITEMS_PER_REMOVE);
 
     if (results.length === ITEMS_PER_PAGE) {
       queue.add(() => runQueue(address, idKey, page + 1));
@@ -125,7 +125,7 @@ exports.task = async () => {
 
   await queue.onIdle();
 
-  checkToProcess();
+  checkToProcess(0);
 
   await queue.onIdle();
 
