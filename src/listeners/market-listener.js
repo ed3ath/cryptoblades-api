@@ -7,11 +7,6 @@ const banned = require('../../banned.json');
 const DB = require('../db');
 const updateABI = require('../tasks/update-abi');
 
-// Provider
-const provider = new ethers.providers.WebSocketProvider(
-  process.env.WEBSOCKET_PROVIDER_URL, // Edit this with your provider url
-);
-
 const WeaponElement = {
   Fire: 0, Earth: 1, Lightning: 2, Water: 3,
 };
@@ -51,6 +46,15 @@ function getStat3Trait(statPattern) {
 }
 
 const listen = async () => {
+  if (!process.env.WEBSOCKET_PROVIDER_URL) {
+    console.log('No WEBSOCKET_PROVIDER_URL, not watching for market updates...');
+    return;
+  }
+
+  const provider = new ethers.providers.WebSocketProvider(
+    process.env.WEBSOCKET_PROVIDER_URL,
+  );
+
   await updateABI.task();
 
   if (!fs.existsSync('./src/data/abi/NFTMarket.json')
