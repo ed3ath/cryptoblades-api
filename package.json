@@ -31,6 +31,7 @@
     "ioredis": "^4.27.6",
     "mongodb": "^3.6.9",
     "node-fetch": "^2.6.1",
+    "p-queue": "^5.0.0",
     "rate-limit-redis": "^2.1.0",
     "rollbar": "^2.24.0",
     "rss-parser": "^3.12.0",
