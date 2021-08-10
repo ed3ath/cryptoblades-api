@@ -1,9 +1,13 @@
 /* eslint-disable no-bitwise */
+const EventEmitter = require('events');
 
 const ethers = require('ethers');
 const fs = require('fs-extra');
 
 const updateABI = require('../tasks/update-abi');
+
+const EXPECTED_PONG_BACK = parseInt(process.env.WEBSOCKET_PROVIDER_PONG_TIMEOUT, 10) || 15000;
+const KEEP_ALIVE_CHECK_INTERVAL = parseInt(process.env.WEBSOCKET_PROVIDER_KEEP_ALIVE, 10) || 7500;
 
 const helpers = {
   getMarketplaceAddress: () => process.env.ADDRESS_MARKET || '0x90099dA42806b21128A094C713347C7885aF79e2',
@@ -21,6 +25,35 @@ const helpers = {
   characters: null,
   shields: null,
 
+  keepAlive: (provider, onDisconnect) => {
+    let pingTimeout = null;
+    let keepAliveInterval = null;
+
+    provider._websocket.on('open', () => {
+      keepAliveInterval = setInterval(() => {
+        provider._websocket.ping();
+
+        // Use `WebSocket#terminate()`, which immediately destroys the connection,
+        // instead of `WebSocket#close()`, which waits for the close timer.
+        // Delay should be equal to the interval at which your server
+        // sends out pings plus a conservative assumption of the latency.
+        pingTimeout = setTimeout(() => {
+          provider._websocket.terminate();
+        }, EXPECTED_PONG_BACK);
+      }, KEEP_ALIVE_CHECK_INTERVAL);
+    });
+
+    provider._websocket.on('close', (err) => {
+      if (keepAliveInterval) clearInterval(keepAliveInterval);
+      if (pingTimeout) clearTimeout(pingTimeout);
+      onDisconnect(err);
+    });
+
+    provider._websocket.on('pong', () => {
+      if (pingTimeout) clearInterval(pingTimeout);
+    });
+  },
+
   init: async (tag = '') => {
     await updateABI.task();
 
@@ -36,14 +69,30 @@ const helpers = {
   },
 
   provider: null,
+  providerEmitter: new EventEmitter(),
   getProvider: () => {
     if (helpers.provider) {
       return helpers.provider;
     }
 
-    helpers.provider = new ethers.providers.WebSocketProvider(
-      process.env.WEBSOCKET_PROVIDER_URL, // Edit this with your provider url
-    );
+    const buildProvider = () => {
+      helpers.provider = new ethers.providers.WebSocketProvider(
+        process.env.WEBSOCKET_PROVIDER_URL, // Edit this with your provider url
+      );
+
+      helpers.keepAlive(helpers.provider, (err) => {
+        console.error('====================================================');
+        console.error('=================Provider restarted=================');
+        console.error(err);
+        console.error('=================Provider restarted=================');
+        console.error('====================================================');
+
+        buildProvider();
+        helpers.providerEmitter.emit('reconnected');
+      });
+    };
+
+    buildProvider();
 
     return helpers.provider;
   },
@@ -61,6 +110,11 @@ const helpers = {
 
     helpers.nftMarketPlace = helpers.getContract(helpers.getMarketplaceAddress(), helpers.marketplaceAbiPath);
 
+    helpers.providerEmitter.on('reconnected', () => {
+      helpers.nftMarketPlace = helpers.nftMarketPlace.connect(helpers.getProvider());
+      helpers.providerEmitter.emit('reconnected:nftMarketPlace');
+    });
+
     return helpers.nftMarketPlace;
   },
 
@@ -70,6 +124,11 @@ const helpers = {
     }
 
     helpers.weapons = helpers.getContract(helpers.getWeaponsAddress(), helpers.weaponsAbiPath);
+
+    helpers.providerEmitter.on('reconnected', () => {
+      helpers.weapons = helpers.weapons.connect(helpers.getProvider());
+      helpers.providerEmitter.emit('reconnected:weapons');
+    });
 
     return helpers.weapons;
   },
@@ -81,6 +140,11 @@ const helpers = {
 
     helpers.characters = helpers.getContract(helpers.getCharactersAddress(), helpers.charactersAbiPath);
 
+    helpers.providerEmitter.on('reconnected', () => {
+      helpers.characters = helpers.characters.connect(helpers.getProvider());
+      helpers.providerEmitter.emit('reconnected:characters');
+    });
+
     return helpers.characters;
   },
 
@@ -90,6 +154,11 @@ const helpers = {
     }
 
     helpers.shields = helpers.getContract(helpers.getShieldsAddress(), helpers.shieldsAbiPath);
+
+    helpers.providerEmitter.on('reconnected', () => {
+      helpers.shields = helpers.shields.connect(helpers.getProvider());
+      helpers.providerEmitter.emit('reconnected:shields');
+    });
 
     return helpers.shields;
   },

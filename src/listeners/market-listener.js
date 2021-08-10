@@ -70,12 +70,18 @@ const listen = async () => {
     console.log('[MARKET]', `Sell ${marketplaceHelper.getTypeName(nftAddress)} ${nftId} from ${seller} to ${buyer}`);
   };
 
-  const nftMarketPlace = marketplaceHelper.getNftMarketPlace();
+  const setup = () => {
+    const nftMarketPlace = marketplaceHelper.getNftMarketPlace();
 
-  nftMarketPlace.on('NewListing', onNewListing);
-  nftMarketPlace.on('ListingPriceChange', onListingPriceChange);
-  nftMarketPlace.on('CancelledListing', onCancelledListing);
-  nftMarketPlace.on('PurchasedListing', onPurchasedListing);
+    nftMarketPlace.on('NewListing', onNewListing);
+    nftMarketPlace.on('ListingPriceChange', onListingPriceChange);
+    nftMarketPlace.on('CancelledListing', onCancelledListing);
+    nftMarketPlace.on('PurchasedListing', onPurchasedListing);
+  };
+
+  setup();
+
+  marketplaceHelper.providerEmitter.on('reconnected:nftMarketPlace', setup);
 };
 
 module.exports = {
