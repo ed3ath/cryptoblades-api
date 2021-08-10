@@ -76,6 +76,8 @@ exports.task = async () => {
   };
 
   const getBatch = async (nftAddress, page) => {
+    if (page < 0) return null;
+
     const collection = marketplaceHelper.getCollection(nftAddress);
     const idKey = marketplaceHelper.getIdKey(nftAddress);
 
