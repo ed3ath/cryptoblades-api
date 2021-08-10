@@ -111,6 +111,7 @@ exports.task = async () => {
 
   const runQueue = async (address, idKey, page) => {
     const results = await getBatch(address, page);
+    if (!results) return;
 
     console.log(
       '[MARKET:Clean-Up]',
