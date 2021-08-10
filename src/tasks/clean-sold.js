@@ -105,8 +105,6 @@ exports.task = async () => {
     });
   };
 
-  const nftMarketPlace = marketplaceHelper.getNftMarketPlace();
-
   const zero = BigNumber.from(0);
 
   const runQueue = async (address, idKey, page) => {
@@ -121,7 +119,7 @@ exports.task = async () => {
     results.forEach((item) => {
       reviewedIds[address] += 1;
       queue.add(async () => {
-        const price = await nftMarketPlace.getFinalPrice(address, item[idKey]);
+        const price = await marketplaceHelper.getNftMarketPlace().getFinalPrice(address, item[idKey]);
 
         if (price.eq(zero)) {
           soldIds[address].push(item[idKey]);
