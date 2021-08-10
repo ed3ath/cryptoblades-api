@@ -32,7 +32,7 @@ exports.route = (app) => {
 
     if (pageSize) pageSize = +pageSize;
     pageSize = pageSize || 60;
-    pageSize = Math.min(pageSize, 60);
+    pageSize = Math.max(1, Math.min(pageSize, 60));
 
     if (pageNum) pageNum = +pageNum;
     pageNum = pageNum || 0;
