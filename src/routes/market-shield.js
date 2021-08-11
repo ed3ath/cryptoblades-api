@@ -150,7 +150,7 @@ exports.route = (app) => {
     return res.json({ added: true });
   });
 
-  app.get('/market/shieldd/:shieldId/sell', async (req, res) => {
+  app.get('/market/shield/:shieldId/sell', async (req, res) => {
     const { shieldId } = req.params;
 
     if (!shieldId) {
