@@ -6,11 +6,11 @@ const marketplaceHelper = require('../helpers/marketplace-helper');
 
 const { DB } = require('../db');
 
-const CONCURRENCY = process.env.TASK_CONCURRENCY || 50;
-const ITEMS_PER_PAGE = process.env.MONGODB_ITEMS_PAGE || 10000;
-const MAX_ITEMS_PER_REMOVE = process.env.MAX_DELETE || 2000;
+const CONCURRENCY = process.env.TASK_CONCURRENCY ? +process.env.TASK_CONCURRENCY : 50;
+const ITEMS_PER_PAGE = process.env.MONGODB_ITEMS_PAGE ? +process.env.MONGODB_ITEMS_PAGE : 10000;
+const MAX_ITEMS_PER_REMOVE = process.env.MAX_DELETE ? +process.env.MAX_DELETE : 2000;
 
-exports.duration = process.env.NODE_ENV === 'production' ? 1800 : 600;
+exports.duration = process.env.NODE_ENV === 'production' ? 7200 : 600;
 
 exports.task = async () => {
   if (!await marketplaceHelper.init(':Clean-Up')) {
@@ -105,12 +105,11 @@ exports.task = async () => {
     });
   };
 
-  const nftMarketPlace = marketplaceHelper.getNftMarketPlace();
-
   const zero = BigNumber.from(0);
 
   const runQueue = async (address, idKey, page) => {
     const results = await getBatch(address, page);
+    if (!results) return;
 
     console.log(
       '[MARKET:Clean-Up]',
@@ -120,7 +119,7 @@ exports.task = async () => {
     results.forEach((item) => {
       reviewedIds[address] += 1;
       queue.add(async () => {
-        const price = await nftMarketPlace.getFinalPrice(address, item[idKey]);
+        const price = await marketplaceHelper.getNftMarketPlace().getFinalPrice(address, item[idKey]);
 
         if (price.eq(zero)) {
           soldIds[address].push(item[idKey]);
