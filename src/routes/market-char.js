@@ -136,15 +136,15 @@ exports.route = (app) => {
     return res.json({ added: true });
   });
 
-  app.get('/market/character/:charId/sell', async (req, res) => {
-    const { charId } = req.params;
+  app.get('/market/character/:network/:charId/sell', async (req, res) => {
+    const { charId, network } = req.params;
 
-    if (!charId) {
-      return res.status(400).json({ error: 'Invalid charId.' });
+    if (!charId || !network) {
+      return res.status(400).json({ error: 'Invalid charId or network.' });
     }
 
     try {
-      const currentMarketEntry = await DB.$marketCharacters.findOne({ charId });
+      const currentMarketEntry = await DB.$marketCharacters.findOne({ charId, network });
       if (currentMarketEntry) {
         const { _id, ...character } = currentMarketEntry;
         await DB.$marketSales.insert({ type: 'character', character });
@@ -157,15 +157,15 @@ exports.route = (app) => {
     return res.json({ sold: true });
   });
 
-  app.delete('/market/character/:charId', async (req, res) => {
-    const { charId } = req.params;
+  app.delete('/market/character/:network/:charId', async (req, res) => {
+    const { charId, network } = req.params;
 
-    if (!charId) {
-      return res.status(400).json({ error: 'Invalid charId.' });
+    if (!charId || !network) {
+      return res.status(400).json({ error: 'Invalid charId or network.' });
     }
 
     try {
-      await DB.$marketCharacters.removeOne({ charId });
+      await DB.$marketCharacters.removeOne({ charId, network });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error });

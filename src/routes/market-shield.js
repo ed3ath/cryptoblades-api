@@ -153,15 +153,15 @@ exports.route = (app) => {
     return res.json({ added: true });
   });
 
-  app.get('/market/shield/:shieldId/sell', async (req, res) => {
-    const { shieldId } = req.params;
+  app.get('/market/shield/:network/:shieldId/sell', async (req, res) => {
+    const { shieldId, network } = req.params;
 
-    if (!shieldId) {
-      return res.status(400).json({ error: 'Invalid shieldId.' });
+    if (!shieldId || !network) {
+      return res.status(400).json({ error: 'Invalid shieldId or network.' });
     }
 
     try {
-      const currentMarketEntry = await DB.$marketShields.findOne({ shieldId });
+      const currentMarketEntry = await DB.$marketShields.findOne({ shieldId, network });
       if (currentMarketEntry) {
         const { _id, ...shield } = currentMarketEntry;
         await DB.$marketSales.insert({ type: 'shield', shield });
@@ -174,15 +174,15 @@ exports.route = (app) => {
     return res.json({ sold: true });
   });
 
-  app.delete('/market/shield/:shieldId', async (req, res) => {
-    const { shieldId } = req.params;
+  app.delete('/market/shield/:network/:shieldId', async (req, res) => {
+    const { shieldId, network } = req.params;
 
-    if (!shieldId) {
-      return res.status(400).json({ error: 'Invalid shieldId.' });
+    if (!shieldId || !network) {
+      return res.status(400).json({ error: 'Invalid shieldId or network.' });
     }
 
     try {
-      await DB.$marketShields.removeOne({ shieldId });
+      await DB.$marketShields.removeOne({ shieldId, network });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error });

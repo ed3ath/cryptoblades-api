@@ -129,7 +129,7 @@ exports.route = (app) => {
     }
 
     try {
-      await DB.$marketWeapons.replaceOne({ weaponId }, {
+      await DB.$marketWeapons.replaceOne({ weaponId, network }, {
         price,
         weaponId,
         weaponStars,
@@ -153,15 +153,15 @@ exports.route = (app) => {
     return res.json({ added: true });
   });
 
-  app.get('/market/weapon/:weaponId/sell', async (req, res) => {
-    const { weaponId } = req.params;
+  app.get('/market/weapon/:network/:weaponId/sell', async (req, res) => {
+    const { weaponId, network } = req.params;
 
-    if (!weaponId) {
-      return res.status(400).json({ error: 'Invalid weaponId.' });
+    if (!weaponId || !network) {
+      return res.status(400).json({ error: 'Invalid weaponId or network.' });
     }
 
     try {
-      const currentMarketEntry = await DB.$marketWeapons.findOne({ weaponId });
+      const currentMarketEntry = await DB.$marketWeapons.findOne({ weaponId, network });
       if (currentMarketEntry) {
         const { _id, ...weapon } = currentMarketEntry;
         await DB.$marketSales.insert({ type: 'weapon', weapon });
@@ -174,15 +174,15 @@ exports.route = (app) => {
     return res.json({ sold: true });
   });
 
-  app.delete('/market/weapon/:weaponId', async (req, res) => {
-    const { weaponId } = req.params;
+  app.delete('/market/weapon/:network/:weaponId', async (req, res) => {
+    const { weaponId, network } = req.params;
 
-    if (!weaponId) {
-      return res.status(400).json({ error: 'Invalid weaponId.' });
+    if (!weaponId || !network) {
+      return res.status(400).json({ error: 'Invalid weaponId or network' });
     }
 
     try {
-      await DB.$marketWeapons.removeOne({ weaponId });
+      await DB.$marketWeapons.removeOne({ weaponId, network });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error });
