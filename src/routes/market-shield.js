@@ -6,12 +6,13 @@ exports.route = (app) => {
     // clean incoming params
     let {
       element, minStars, maxStars, sortBy, sortDir, pageSize, pageNum, sellerAddress, buyerAddress,
-      minPrice, maxPrice,
+      minPrice, maxPrice, network,
     } = req.query;
 
     element = element || '';
     sellerAddress = sellerAddress || '';
     buyerAddress = buyerAddress || '';
+    network = network || 'bsc';
 
     if (minPrice) minPrice = +minPrice;
     minPrice = Math.max(minPrice, 0);
@@ -40,6 +41,7 @@ exports.route = (app) => {
     // build a query
     const query = { };
 
+    if (network) query.network = network;
     if (element) query.shieldElement = element;
     if (sellerAddress) query.sellerAddress = sellerAddress;
     if (buyerAddress) query.buyerAddress = buyerAddress;
@@ -116,13 +118,13 @@ exports.route = (app) => {
     const { shieldId } = req.params;
     const {
       price, shieldStars, shieldElement, stat1Element, stat1Value,
-      stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress, buyerAddress,
+      stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress, buyerAddress, network,
     } = req.body;
 
     if (!price || !shieldId || !shieldStars || !shieldElement || !stat1Element
-     || !stat1Value || !timestamp || !sellerAddress) {
+     || !stat1Value || !timestamp || !sellerAddress || !network) {
       return res.status(400).json({
-        error: 'Invalid body. Must pass price, shieldId, shieldStars, shieldElement, stat1Element, stat1Value, timestamp, sellerAddress.',
+        error: 'Invalid body. Must pass price, shieldId, shieldStars, shieldElement, stat1Element, stat1Value, timestamp, sellerAddress, network.',
       });
     }
 
@@ -141,6 +143,7 @@ exports.route = (app) => {
         timestamp,
         sellerAddress,
         buyerAddress,
+        network,
       }, { upsert: true });
     } catch (error) {
       console.error(error);

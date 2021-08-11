@@ -217,7 +217,7 @@ const helpers = {
       const charElement = helpers.traitNumberToName(+character[2]);
 
       const ret = {
-        charId: nftId, charLevel, charElement, price, timestamp, sellerAddress,
+        charId: nftId, charLevel, charElement, price, timestamp, sellerAddress, network: 'bsc',
       };
 
       return ret;
@@ -252,6 +252,7 @@ const helpers = {
         price,
         timestamp,
         sellerAddress,
+        network: 'bsc',
       };
 
       return ret;
@@ -286,6 +287,7 @@ const helpers = {
         price,
         timestamp,
         sellerAddress,
+        network: 'bsc',
       };
     }
 

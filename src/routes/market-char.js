@@ -6,12 +6,13 @@ exports.route = (app) => {
     // clean incoming params
     let {
       element, minLevel, maxLevel, sortBy, sortDir, pageSize, pageNum, sellerAddress, buyerAddress,
-      minPrice, maxPrice,
+      minPrice, maxPrice, network,
     } = req.query;
 
     element = element || '';
     sellerAddress = sellerAddress || '';
     buyerAddress = buyerAddress || '';
+    network = network || 'bsc';
 
     if (minLevel) minLevel = +minLevel;
     minLevel = minLevel || 1;
@@ -40,6 +41,7 @@ exports.route = (app) => {
     // build a query
     const query = { };
 
+    if (network) query.network = network;
     if (element) query.charElement = element;
     if (sellerAddress) query.sellerAddress = sellerAddress;
     if (buyerAddress) query.buyerAddress = buyerAddress;
@@ -115,16 +117,16 @@ exports.route = (app) => {
   app.put('/market/character/:charId', async (req, res) => {
     const { charId } = req.params;
     const {
-      price, charLevel, charElement, timestamp, sellerAddress, buyerAddress,
+      price, charLevel, charElement, timestamp, sellerAddress, buyerAddress, network,
     } = req.body;
 
-    if (!price || !charId || !charLevel || !charElement || !timestamp || !sellerAddress) {
-      return res.status(400).json({ error: 'Invalid body. Must pass price, charId, charLevel, charElement, timestamp, sellerAddress.' });
+    if (!price || !charId || !charLevel || !charElement || !timestamp || !sellerAddress || !network) {
+      return res.status(400).json({ error: 'Invalid body. Must pass price, charId, charLevel, charElement, timestamp, sellerAddress, network.' });
     }
 
     try {
       await DB.$marketCharacters.replaceOne({ charId }, {
-        price, charId, charLevel, charElement, timestamp, sellerAddress, buyerAddress,
+        price, charId, charLevel, charElement, timestamp, sellerAddress, buyerAddress, network,
       }, { upsert: true });
     } catch (error) {
       console.error(error);
