@@ -115,7 +115,7 @@ exports.route = (app) => {
   });
 
   app.put('/market/shield/:network/:shieldId', async (req, res) => {
-    const { shieldId } = req.params;
+    const { shieldId, network } = req.params;
     const {
       price, shieldStars, shieldElement, stat1Element, stat1Value,
       stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress, buyerAddress,
