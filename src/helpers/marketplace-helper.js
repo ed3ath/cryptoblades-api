@@ -11,8 +11,8 @@ const KEEP_ALIVE_CHECK_INTERVAL = parseInt(process.env.WEBSOCKET_PROVIDER_KEEP_A
 
 const helpers = {
   getMarketplaceAddress: () => process.env.ADDRESS_MARKET || '0x90099dA42806b21128A094C713347C7885aF79e2',
-  getCharactersAddress: () => process.env.ADDRESS_CHARACTER || '0x7E091b0a220356B157131c831258A9C98aC8031A',
-  getWeaponsAddress: () => process.env.ADDRESS_WEAPON || '0xc6f252c2CdD4087e30608A35c022ce490B58179b',
+  getCharactersAddress: () => process.env.ADDRESS_CHARACTER || '0xc6f252c2CdD4087e30608A35c022ce490B58179b',
+  getWeaponsAddress: () => process.env.ADDRESS_WEAPON || '0x7E091b0a220356B157131c831258A9C98aC8031A',
   getShieldsAddress: () => process.env.ADDRESS_SHIELD || '0xf9E9F6019631bBE7db1B71Ec4262778eb6C3c520',
 
   marketplaceAbiPath: './src/data/abi/NFTMarket.json',
