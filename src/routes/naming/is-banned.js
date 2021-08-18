@@ -1,4 +1,4 @@
-const banned = require('../../banned.json');
+const banned = require('../../../banned.json');
 
 exports.route = (app) => {
   app.get('/static/wallet/banned/:walletAddress', async (req, res) => {

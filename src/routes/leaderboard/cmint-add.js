@@ -1,17 +1,17 @@
-const { DB } = require('../db');
+const { DB } = require('../../db');
 
 exports.route = (app) => {
-  app.post('/leaderboard/character/level/add', async (req, res) => {
+  app.post('/leaderboard/character/mint/add', async (req, res) => {
     const {
-      hash, accountAddress, charId, level, gas,
+      hash, accountAddress, charId, gas,
     } = req.body;
-    if (!hash || !accountAddress || !charId || !level) {
+    if (!hash || !accountAddress || !charId) {
       return res.status(400).json({ error: 'Invalid query. Must pass hash, accountAddress, charId.' });
     }
 
     try {
-      await DB.$clevels.replaceOne({ hash }, {
-        hash, accountAddress, charId, level: +level, gas,
+      await DB.$cmints.replaceOne({ hash }, {
+        hash, accountAddress, charId, gas,
       }, { upsert: true });
     } catch (error) {
       return res.status(500).json({ error });

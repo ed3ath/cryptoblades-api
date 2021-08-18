@@ -1,11 +1,11 @@
-const { DB } = require('../db');
-const { redis } = require('../helpers/redis-helper');
+const { DB } = require('../../db');
+const { redis } = require('../../helpers/redis-helper');
 
 exports.route = (app) => {
-  app.get('/static/market/shield', async (req, res) => {
+  app.get('/static/market/character', async (req, res) => {
     // clean incoming params
     let {
-      element, minStars, maxStars, sortBy, sortDir, pageSize, pageNum, sellerAddress, buyerAddress,
+      element, minLevel, maxLevel, sortBy, sortDir, pageSize, pageNum, sellerAddress, buyerAddress,
       minPrice, maxPrice, network,
     } = req.query;
 
@@ -14,17 +14,17 @@ exports.route = (app) => {
     buyerAddress = buyerAddress || '';
     network = network || 'bsc';
 
+    if (minLevel) minLevel = +minLevel;
+    minLevel = minLevel || 1;
+
+    if (maxLevel) maxLevel = +maxLevel;
+    maxLevel = maxLevel || 101;
+
     if (minPrice) minPrice = +minPrice;
     minPrice = Math.max(minPrice, 0);
 
     if (maxPrice) maxPrice = +maxPrice;
     maxPrice = Math.max(maxPrice, 0);
-
-    if (minStars) minStars = +minStars;
-    minStars = minStars || 1;
-
-    if (maxStars) maxStars = +maxStars;
-    maxStars = maxStars || 5;
 
     sortBy = sortBy || 'timestamp';
 
@@ -42,14 +42,14 @@ exports.route = (app) => {
     const query = { };
 
     if (network) query.network = network;
-    if (element) query.shieldElement = element;
+    if (element) query.charElement = element;
     if (sellerAddress) query.sellerAddress = sellerAddress;
     if (buyerAddress) query.buyerAddress = buyerAddress;
     if (!buyerAddress) query.buyerAddress = { $eq: null };
-    if (minStars || maxStars) {
-      query.shieldStars = {};
-      if (minStars) query.shieldStars.$gte = minStars;
-      if (maxStars) query.shieldStars.$lte = maxStars;
+    if (minLevel || maxLevel) {
+      query.charLevel = {};
+      if (minLevel) query.charLevel.$gte = minLevel;
+      if (maxLevel) query.charLevel.$lte = maxLevel;
     }
 
     if (minPrice || maxPrice) {
@@ -72,9 +72,9 @@ exports.route = (app) => {
 
     // only unauthenticated requests hit redis
     if (redis && !req.isAuthenticated) {
-      const cached = await redis.exists(`mshield-${cacheKey}`);
+      const cached = await redis.exists(`mchar-${cacheKey}`);
       if (cached) {
-        const dataRedis = await redis.get(`mshield-${cacheKey}`);
+        const dataRedis = await redis.get(`mchar-${cacheKey}`);
         const data = JSON.parse(dataRedis);
         if (data && data.results && data.results.length > 0) {
           res.json(data);
@@ -85,8 +85,8 @@ exports.route = (app) => {
 
     // get and send results
     try {
-      const resultsCursor = await DB.$marketShields.find(query, options);
-      const allResultsCursor = await DB.$marketShields.find(query);
+      const resultsCursor = await DB.$marketCharacters.find(query, options);
+      const allResultsCursor = await DB.$marketCharacters.find(query);
 
       const results = await resultsCursor.toArray();
 
@@ -95,7 +95,7 @@ exports.route = (app) => {
 
       const resData = {
         results,
-        idResults: results.map((x) => x.shieldId),
+        idResults: results.map((x) => x.charId),
         page: {
           curPage: pageNum,
           curOffset: pageNum * pageSize,
@@ -107,43 +107,26 @@ exports.route = (app) => {
 
       res.json(resData);
 
-      if (redis) redis.set(`mshield-${cacheKey}`, JSON.stringify(resData), 'ex', 450);
+      if (redis) redis.set(`mchar-${cacheKey}`, JSON.stringify(resData), 'ex', 450);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error });
     }
   });
 
-  app.put('/market/shield/:network/:shieldId', async (req, res) => {
-    const { shieldId, network } = req.params;
+  app.put('/market/character/:network/:charId', async (req, res) => {
+    const { charId, network } = req.params;
     const {
-      price, shieldStars, shieldElement, stat1Element, stat1Value,
-      stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress, buyerAddress,
+      price, charLevel, charElement, timestamp, sellerAddress, buyerAddress,
     } = req.body;
 
-    if (!price || !shieldId || !shieldStars || !shieldElement || !stat1Element
-     || !stat1Value || !timestamp || !sellerAddress || !network) {
-      return res.status(400).json({
-        error: 'Invalid body. Must pass price, shieldId, shieldStars, shieldElement, stat1Element, stat1Value, timestamp, sellerAddress, network.',
-      });
+    if (!price || !charId || !charLevel || !charElement || !timestamp || !sellerAddress || !network) {
+      return res.status(400).json({ error: 'Invalid body. Must pass price, charId, charLevel, charElement, timestamp, sellerAddress, network.' });
     }
 
     try {
-      await DB.$marketShields.replaceOne({ shieldId, network }, {
-        price,
-        shieldId,
-        shieldStars,
-        shieldElement,
-        stat1Element,
-        stat1Value,
-        stat2Element,
-        stat2Value,
-        stat3Element,
-        stat3Value,
-        timestamp,
-        sellerAddress,
-        buyerAddress,
-        network,
+      await DB.$marketCharacters.replaceOne({ charId }, {
+        price, charId, charLevel, charElement, timestamp, sellerAddress, buyerAddress, network,
       }, { upsert: true });
     } catch (error) {
       console.error(error);
@@ -153,18 +136,18 @@ exports.route = (app) => {
     return res.json({ added: true });
   });
 
-  app.get('/market/shield/:network/:shieldId/sell', async (req, res) => {
-    const { shieldId, network } = req.params;
+  app.get('/market/character/:network/:charId/sell', async (req, res) => {
+    const { charId, network } = req.params;
 
-    if (!shieldId || !network) {
-      return res.status(400).json({ error: 'Invalid shieldId or network.' });
+    if (!charId || !network) {
+      return res.status(400).json({ error: 'Invalid charId or network.' });
     }
 
     try {
-      const currentMarketEntry = await DB.$marketShields.findOne({ shieldId, network });
+      const currentMarketEntry = await DB.$marketCharacters.findOne({ charId, network });
       if (currentMarketEntry) {
-        const { _id, ...shield } = currentMarketEntry;
-        await DB.$marketSales.insert({ type: 'shield', shield });
+        const { _id, ...character } = currentMarketEntry;
+        await DB.$marketSales.insert({ type: 'character', character });
       }
     } catch (error) {
       console.error(error);
@@ -174,15 +157,15 @@ exports.route = (app) => {
     return res.json({ sold: true });
   });
 
-  app.delete('/market/shield/:network/:shieldId', async (req, res) => {
-    const { shieldId, network } = req.params;
+  app.delete('/market/character/:network/:charId', async (req, res) => {
+    const { charId, network } = req.params;
 
-    if (!shieldId || !network) {
-      return res.status(400).json({ error: 'Invalid shieldId or network.' });
+    if (!charId || !network) {
+      return res.status(400).json({ error: 'Invalid charId or network.' });
     }
 
     try {
-      await DB.$marketShields.removeOne({ shieldId, network });
+      await DB.$marketCharacters.removeOne({ charId, network });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error });
@@ -191,7 +174,7 @@ exports.route = (app) => {
     return res.json({ deleted: true });
   });
 
-  app.delete('/market/shield/all/:sellerAddress', async (req, res) => {
+  app.delete('/market/character/all/:sellerAddress', async (req, res) => {
     const { sellerAddress } = req.params;
 
     if (!sellerAddress) {
@@ -199,7 +182,7 @@ exports.route = (app) => {
     }
 
     try {
-      await DB.$marketShields.remove({ sellerAddress });
+      await DB.$marketWeapons.remove({ sellerAddress });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error });

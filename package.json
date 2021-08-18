@@ -33,6 +33,7 @@
     "node-fetch": "^2.6.1",
     "p-queue": "^5.0.0",
     "rate-limit-redis": "^2.1.0",
+    "recursive-readdir": "^2.2.2",
     "rollbar": "^2.24.0",
     "rss-parser": "^3.12.0",
     "seedrandom": "^3.0.5",

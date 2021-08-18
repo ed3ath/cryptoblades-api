@@ -1,4 +1,5 @@
 const fs = require('fs');
+const read = require('recursive-readdir');
 const express = require('express');
 
 const { DB } = require('./db');
@@ -104,9 +105,10 @@ const startApp = () => {
   app.listen(port, () => {
     console.log(`API started on port ${port}`);
 
-    fs.readdir(`${__dirname}/routes`, (err, files) => {
+    read(`${__dirname}/routes`, (err, files) => {
       files.forEach((file) => {
-        require(`${__dirname}/routes/${file}`).route(app);
+        const subpath = file.split('routes')[1];
+        require(`${__dirname}/routes/${subpath}`).route(app);
       });
     });
   });

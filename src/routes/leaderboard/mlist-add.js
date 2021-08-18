@@ -1,4 +1,4 @@
-const { DB } = require('../db');
+const { DB } = require('../../db');
 
 exports.route = (app) => {
   app.post('/leaderboard/market/list/add', async (req, res) => {

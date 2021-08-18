@@ -1,4 +1,4 @@
-const { getCharacterNameFromSeed } = require('../helpers/char-name');
+const { getCharacterNameFromSeed } = require('../../helpers/char-name');
 
 exports.route = (app) => {
   app.get('/static/character/name/:id', async (req, res) => {

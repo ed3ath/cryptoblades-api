@@ -1,4 +1,4 @@
-const { getWeaponNameFromSeed } = require('../helpers/weapon-name');
+const { getWeaponNameFromSeed } = require('../../helpers/weapon-name');
 
 exports.route = (app) => {
   app.get('/static/weapon/name/:id/:stars', async (req, res) => {

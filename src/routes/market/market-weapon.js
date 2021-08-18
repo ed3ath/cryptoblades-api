@@ -1,11 +1,11 @@
-const { DB } = require('../db');
-const { redis } = require('../helpers/redis-helper');
+const { DB } = require('../../db');
+const { redis } = require('../../helpers/redis-helper');
 
 exports.route = (app) => {
-  app.get('/static/market/character', async (req, res) => {
+  app.get('/static/market/weapon', async (req, res) => {
     // clean incoming params
     let {
-      element, minLevel, maxLevel, sortBy, sortDir, pageSize, pageNum, sellerAddress, buyerAddress,
+      element, minStars, maxStars, sortBy, sortDir, pageSize, pageNum, sellerAddress, buyerAddress,
       minPrice, maxPrice, network,
     } = req.query;
 
@@ -14,17 +14,17 @@ exports.route = (app) => {
     buyerAddress = buyerAddress || '';
     network = network || 'bsc';
 
-    if (minLevel) minLevel = +minLevel;
-    minLevel = minLevel || 1;
-
-    if (maxLevel) maxLevel = +maxLevel;
-    maxLevel = maxLevel || 101;
-
     if (minPrice) minPrice = +minPrice;
     minPrice = Math.max(minPrice, 0);
 
     if (maxPrice) maxPrice = +maxPrice;
     maxPrice = Math.max(maxPrice, 0);
+
+    if (minStars) minStars = +minStars;
+    minStars = minStars || 1;
+
+    if (maxStars) maxStars = +maxStars;
+    maxStars = maxStars || 5;
 
     sortBy = sortBy || 'timestamp';
 
@@ -42,14 +42,14 @@ exports.route = (app) => {
     const query = { };
 
     if (network) query.network = network;
-    if (element) query.charElement = element;
+    if (element) query.weaponElement = element;
     if (sellerAddress) query.sellerAddress = sellerAddress;
     if (buyerAddress) query.buyerAddress = buyerAddress;
     if (!buyerAddress) query.buyerAddress = { $eq: null };
-    if (minLevel || maxLevel) {
-      query.charLevel = {};
-      if (minLevel) query.charLevel.$gte = minLevel;
-      if (maxLevel) query.charLevel.$lte = maxLevel;
+    if (minStars || maxStars) {
+      query.weaponStars = {};
+      if (minStars) query.weaponStars.$gte = minStars;
+      if (maxStars) query.weaponStars.$lte = maxStars;
     }
 
     if (minPrice || maxPrice) {
@@ -72,9 +72,9 @@ exports.route = (app) => {
 
     // only unauthenticated requests hit redis
     if (redis && !req.isAuthenticated) {
-      const cached = await redis.exists(`mchar-${cacheKey}`);
+      const cached = await redis.exists(`mweapon-${cacheKey}`);
       if (cached) {
-        const dataRedis = await redis.get(`mchar-${cacheKey}`);
+        const dataRedis = await redis.get(`mweapon-${cacheKey}`);
         const data = JSON.parse(dataRedis);
         if (data && data.results && data.results.length > 0) {
           res.json(data);
@@ -85,8 +85,8 @@ exports.route = (app) => {
 
     // get and send results
     try {
-      const resultsCursor = await DB.$marketCharacters.find(query, options);
-      const allResultsCursor = await DB.$marketCharacters.find(query);
+      const resultsCursor = await DB.$marketWeapons.find(query, options);
+      const allResultsCursor = await DB.$marketWeapons.find(query);
 
       const results = await resultsCursor.toArray();
 
@@ -95,7 +95,7 @@ exports.route = (app) => {
 
       const resData = {
         results,
-        idResults: results.map((x) => x.charId),
+        idResults: results.map((x) => x.weaponId),
         page: {
           curPage: pageNum,
           curOffset: pageNum * pageSize,
@@ -107,26 +107,43 @@ exports.route = (app) => {
 
       res.json(resData);
 
-      if (redis) redis.set(`mchar-${cacheKey}`, JSON.stringify(resData), 'ex', 450);
+      if (redis) redis.set(`mweapon-${cacheKey}`, JSON.stringify(resData), 'ex', 450);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error });
     }
   });
 
-  app.put('/market/character/:network/:charId', async (req, res) => {
-    const { charId, network } = req.params;
+  app.put('/market/weapon/:network/:weaponId', async (req, res) => {
+    const { weaponId, network } = req.params;
     const {
-      price, charLevel, charElement, timestamp, sellerAddress, buyerAddress,
+      price, weaponStars, weaponElement, stat1Element, stat1Value,
+      stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress, buyerAddress,
     } = req.body;
 
-    if (!price || !charId || !charLevel || !charElement || !timestamp || !sellerAddress || !network) {
-      return res.status(400).json({ error: 'Invalid body. Must pass price, charId, charLevel, charElement, timestamp, sellerAddress, network.' });
+    if (!price || !weaponId || !weaponStars || !weaponElement || !stat1Element
+     || !stat1Value || !timestamp || !sellerAddress || !network) {
+      return res.status(400).json({
+        error: 'Invalid body. Must pass price, weaponId, weaponStars, weaponElement, stat1Element, stat1Value, timestamp, sellerAddress, network.',
+      });
     }
 
     try {
-      await DB.$marketCharacters.replaceOne({ charId }, {
-        price, charId, charLevel, charElement, timestamp, sellerAddress, buyerAddress, network,
+      await DB.$marketWeapons.replaceOne({ weaponId, network }, {
+        price,
+        weaponId,
+        weaponStars,
+        weaponElement,
+        stat1Element,
+        stat1Value,
+        stat2Element,
+        stat2Value,
+        stat3Element,
+        stat3Value,
+        timestamp,
+        sellerAddress,
+        buyerAddress,
+        network,
       }, { upsert: true });
     } catch (error) {
       console.error(error);
@@ -136,18 +153,18 @@ exports.route = (app) => {
     return res.json({ added: true });
   });
 
-  app.get('/market/character/:network/:charId/sell', async (req, res) => {
-    const { charId, network } = req.params;
+  app.get('/market/weapon/:network/:weaponId/sell', async (req, res) => {
+    const { weaponId, network } = req.params;
 
-    if (!charId || !network) {
-      return res.status(400).json({ error: 'Invalid charId or network.' });
+    if (!weaponId || !network) {
+      return res.status(400).json({ error: 'Invalid weaponId or network.' });
     }
 
     try {
-      const currentMarketEntry = await DB.$marketCharacters.findOne({ charId, network });
+      const currentMarketEntry = await DB.$marketWeapons.findOne({ weaponId, network });
       if (currentMarketEntry) {
-        const { _id, ...character } = currentMarketEntry;
-        await DB.$marketSales.insert({ type: 'character', character });
+        const { _id, ...weapon } = currentMarketEntry;
+        await DB.$marketSales.insert({ type: 'weapon', weapon });
       }
     } catch (error) {
       console.error(error);
@@ -157,15 +174,15 @@ exports.route = (app) => {
     return res.json({ sold: true });
   });
 
-  app.delete('/market/character/:network/:charId', async (req, res) => {
-    const { charId, network } = req.params;
+  app.delete('/market/weapon/:network/:weaponId', async (req, res) => {
+    const { weaponId, network } = req.params;
 
-    if (!charId || !network) {
-      return res.status(400).json({ error: 'Invalid charId or network.' });
+    if (!weaponId || !network) {
+      return res.status(400).json({ error: 'Invalid weaponId or network' });
     }
 
     try {
-      await DB.$marketCharacters.removeOne({ charId, network });
+      await DB.$marketWeapons.removeOne({ weaponId, network });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error });
@@ -174,7 +191,7 @@ exports.route = (app) => {
     return res.json({ deleted: true });
   });
 
-  app.delete('/market/character/all/:sellerAddress', async (req, res) => {
+  app.delete('/market/weapon/all/:sellerAddress', async (req, res) => {
     const { sellerAddress } = req.params;
 
     if (!sellerAddress) {

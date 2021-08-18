@@ -1,4 +1,4 @@
-const { DB } = require('../db');
+const { DB } = require('../../db');
 
 exports.route = (app) => {
   app.get('/static/market/transactions/:id', async (req, res) => {

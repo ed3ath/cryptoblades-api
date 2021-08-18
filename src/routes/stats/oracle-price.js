@@ -1,4 +1,4 @@
-const { DB } = require('../db');
+const { DB } = require('../../db');
 
 exports.route = (app) => {
   app.get('/static/calculated/skill/price', async (req, res) => {

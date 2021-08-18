@@ -1,5 +1,5 @@
-const { DB } = require('../db');
-const { redis } = require('../helpers/redis-helper');
+const { DB } = require('../../db');
+const { redis } = require('../../helpers/redis-helper');
 
 exports.route = (app) => {
   app.get('/static/notifications', async (req, res) => {
