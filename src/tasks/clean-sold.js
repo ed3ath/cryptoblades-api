@@ -8,7 +8,7 @@ const CONCURRENCY = process.env.TASK_CONCURRENCY ? +process.env.TASK_CONCURRENCY
 const ITEMS_PER_PAGE = process.env.MONGODB_ITEMS_PAGE ? +process.env.MONGODB_ITEMS_PAGE : 10000;
 const MAX_ITEMS_PER_REMOVE = process.env.MAX_DELETE ? +process.env.MAX_DELETE : 2000;
 
-exports.duration = process.env.NODE_ENV === 'production' ? 7200 : 600;
+exports.duration = process.env.NODE_ENV === 'production' ? -1 : -1;
 
 exports.task = async () => {
   if (!await marketplaceHelper.init(':Clean-Up')) {
