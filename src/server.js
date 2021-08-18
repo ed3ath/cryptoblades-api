@@ -5,7 +5,7 @@ const express = require('express');
 const { DB } = require('./db');
 const { startLogging } = require('./logger');
 const { secretCheck } = require('./middleware/secret');
-const { authenticate } = require('./middleware/authenticate');
+const { authenticateCalculated, authenticateMarket } = require('./middleware/authenticate');
 const { redis } = require('./helpers/redis-helper');
 
 // cron related
@@ -51,11 +51,22 @@ const notmatches = (path, middleware) => (req, res, next) => {
   return middleware(req, res, next);
 };
 
+const notstatic = (path, middleware) => (req, res, next) => {
+  console.log('check');
+  if (req.path.includes(path) && !req.path.includes('/static')) {
+    console.log('not static', req.path);
+    return next();
+  }
+
+  return middleware(req, res, next);
+};
+
 const startApp = () => {
   const app = express();
   app.set('trust proxy', 1);
 
-  app.use(authenticate);
+  app.use(notstatic('/market', authenticateMarket));
+  app.use(notstatic('/calculated', authenticateCalculated));
   app.use(notmatches('/static', secretCheck));
 
   const allowList = [

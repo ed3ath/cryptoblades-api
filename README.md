@@ -5,7 +5,13 @@
 Create a `.env` file with the following:
 
 - `MONGODB_URI` - a ref to the mongodb instance
-- `API_SECRET` - a string that must be passed for transactions to work
+- `API_SECRET` - a string that must be passed for transactions to work (applies globally)
+- `API_SECRET_MARKET` - a string that must be passed for transactions to work (market only)
+- `API_SECRET_CALCULATED` - a string that must be passed for transactions to work (calculated only)
+
+### Secrets
+
+`API_SECRET` is a global master password. If it is specified, the other two are not required. However, if not specified, `API_SECRET_MARKET` must match the auth token for the market, and `API_SECRET_CALCULATED` must match the auth token for the calculated routes.
 
 ## Run
 
