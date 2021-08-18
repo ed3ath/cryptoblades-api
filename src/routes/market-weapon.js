@@ -114,11 +114,11 @@ exports.route = (app) => {
     }
   });
 
-  app.put('/market/weapon/:weaponId', async (req, res) => {
-    const { weaponId } = req.params;
+  app.put('/market/weapon/:network/:weaponId', async (req, res) => {
+    const { weaponId, network } = req.params;
     const {
       price, weaponStars, weaponElement, stat1Element, stat1Value,
-      stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress, buyerAddress, network,
+      stat2Element, stat2Value, stat3Element, stat3Value, timestamp, sellerAddress, buyerAddress,
     } = req.body;
 
     if (!price || !weaponId || !weaponStars || !weaponElement || !stat1Element

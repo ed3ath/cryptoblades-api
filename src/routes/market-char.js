@@ -114,10 +114,10 @@ exports.route = (app) => {
     }
   });
 
-  app.put('/market/character/:charId', async (req, res) => {
-    const { charId } = req.params;
+  app.put('/market/character/:network/:charId', async (req, res) => {
+    const { charId, network } = req.params;
     const {
-      price, charLevel, charElement, timestamp, sellerAddress, buyerAddress, network,
+      price, charLevel, charElement, timestamp, sellerAddress, buyerAddress,
     } = req.body;
 
     if (!price || !charId || !charLevel || !charElement || !timestamp || !sellerAddress || !network) {
