@@ -117,10 +117,6 @@ const helpers = {
 
     helpers.nftMarketPlace = Market;
 
-    Market.on('error', (err) => {
-      console.error('[MARKET]', err);
-    });
-
     return helpers.nftMarketPlace;
   },
 

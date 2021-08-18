@@ -95,11 +95,14 @@ const listen = async () => {
       },
     };
 
-    nftMarketPlace.events.allEvents({ filter: {} }).on('data', (event) => {
-      if (!events[event.event]) return;
+    nftMarketPlace.events.allEvents({ filter: {} })
+      .on('data', (event) => {
+        if (!events[event.event]) return;
 
-      events[event.event].func(...events[event.event].argsArr(event.returnValues));
-    });
+        events[event.event].func(...events[event.event].argsArr(event.returnValues));
+      }).on('error', (err) => {
+        console.error('[MARKET]', err);
+      });
   };
 
   setup();
