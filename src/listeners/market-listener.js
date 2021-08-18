@@ -73,10 +73,33 @@ const listen = async () => {
   const setup = () => {
     const nftMarketPlace = marketplaceHelper.getNftMarketPlace();
 
-    nftMarketPlace.on('NewListing', onNewListing);
-    nftMarketPlace.on('ListingPriceChange', onListingPriceChange);
-    nftMarketPlace.on('CancelledListing', onCancelledListing);
-    nftMarketPlace.on('PurchasedListing', onPurchasedListing);
+    const events = {
+      NewListing: {
+        func: onNewListing,
+        argsArr: (res) => ([res.seller, res.nftAddress, res.nftID, res.price]),
+      },
+
+      ListingPriceChange: {
+        func: onListingPriceChange,
+        argsArr: (res) => ([res.seller, res.nftAddress, res.nftID, res.newPrice]),
+      },
+
+      CancelledListing: {
+        func: onCancelledListing,
+        argsArr: (res) => ([res.seller, res.nftAddress, res.nftID]),
+      },
+
+      PurchasedListing: {
+        func: onPurchasedListing,
+        argsArr: (res) => ([res.buyer, res.seller, res.nftAddress, res.nftID]),
+      },
+    };
+
+    nftMarketPlace.events.allEvents({ filter: {} }).on('data', (event) => {
+      if (!events[event.event]) return;
+
+      events[event.event].func(...events[event.event].argsArr(event.returnValues));
+    });
   };
 
   setup();

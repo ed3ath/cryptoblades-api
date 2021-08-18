@@ -35,7 +35,8 @@
     "rate-limit-redis": "^2.1.0",
     "rollbar": "^2.24.0",
     "rss-parser": "^3.12.0",
-    "seedrandom": "^3.0.5"
+    "seedrandom": "^3.0.5",
+    "web3": "^1.5.2"
   },
   "devDependencies": {
     "eslint": "^7.31.0",

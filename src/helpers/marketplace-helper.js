@@ -2,6 +2,7 @@
 const EventEmitter = require('events');
 
 const ethers = require('ethers');
+const Web3 = require('web3');
 const fs = require('fs-extra');
 
 const updateABI = require('../tasks/update-abi');
@@ -108,12 +109,40 @@ const helpers = {
       return helpers.nftMarketPlace;
     }
 
-    helpers.nftMarketPlace = helpers.getContract(helpers.getMarketplaceAddress(), helpers.marketplaceAbiPath);
+    const web3 = new Web3(process.env.WEBSOCKET_PROVIDER_URL);
+    const Market = new web3.eth.Contract(
+      fs.readJSONSync(helpers.marketplaceAbiPath).abi,
+      helpers.getMarketplaceAddress(),
+    );
 
-    helpers.providerEmitter.on('reconnected', () => {
-      helpers.nftMarketPlace = helpers.nftMarketPlace.connect(helpers.getProvider());
-      helpers.providerEmitter.emit('reconnected:nftMarketPlace');
-    });
+    const allowedEvents = [
+      'NewListing',
+      'ListingPriceChange',
+      'CancelledListing',
+      'PurchasedListing',
+    ];
+
+    function handleEvent(event) {
+      if (allowedEvents.includes(event.event)) {
+        console.log(`${event.event} event received.`);
+        console.log(event.returnValues);
+        console.log(...event.returnValues);
+      }
+    }
+
+    helpers.nftMarketPlace = Market;
+
+    /*
+      .on('connected', () => {
+        console.log('Listening for market events');
+      }).on('data', async (event) => {
+        handleEvent(event);
+      }).on('error', (err) => {
+        console.log(err);
+      });
+      */
+
+    // helpers.nftMarketPlace = helpers.getContract(helpers.getMarketplaceAddress(), helpers.marketplaceAbiPath);
 
     return helpers.nftMarketPlace;
   },
