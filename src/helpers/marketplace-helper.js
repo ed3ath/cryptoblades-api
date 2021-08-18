@@ -115,34 +115,11 @@ const helpers = {
       helpers.getMarketplaceAddress(),
     );
 
-    const allowedEvents = [
-      'NewListing',
-      'ListingPriceChange',
-      'CancelledListing',
-      'PurchasedListing',
-    ];
-
-    function handleEvent(event) {
-      if (allowedEvents.includes(event.event)) {
-        console.log(`${event.event} event received.`);
-        console.log(event.returnValues);
-        console.log(...event.returnValues);
-      }
-    }
-
     helpers.nftMarketPlace = Market;
 
-    /*
-      .on('connected', () => {
-        console.log('Listening for market events');
-      }).on('data', async (event) => {
-        handleEvent(event);
-      }).on('error', (err) => {
-        console.log(err);
-      });
-      */
-
-    // helpers.nftMarketPlace = helpers.getContract(helpers.getMarketplaceAddress(), helpers.marketplaceAbiPath);
+    Market.on('error', (err) => {
+      console.error('[MARKET]', err);
+    });
 
     return helpers.nftMarketPlace;
   },
