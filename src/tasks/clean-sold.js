@@ -1,5 +1,3 @@
-const { BigNumber } = require('ethers');
-
 const PQueue = require('p-queue');
 
 const marketplaceHelper = require('../helpers/marketplace-helper');
