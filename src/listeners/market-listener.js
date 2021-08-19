@@ -16,7 +16,7 @@ const listen = async () => {
 
   const createOrUpdate = async (nftAddress, nftId, price, seller) => {
     if (banned.includes(seller)) return;
-    if (await marketplaceHelper.isUserBanned(seller)) return;
+    if (await marketplaceHelper.isUserBanned(seller) === 'true') return;
 
     const collection = marketplaceHelper.getCollection(nftAddress);
     const data = await marketplaceHelper.getNFTData(nftAddress, nftId, price, seller);
