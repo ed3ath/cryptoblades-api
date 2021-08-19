@@ -14,6 +14,7 @@
       "no-underscore-dangle": "off",
       "no-console": "off",
       "global-require": "off",
-      "max-len": ["error", 150]
+      "max-len": ["error", 200],
+      "linebreak-style": "off"
     }
 }
