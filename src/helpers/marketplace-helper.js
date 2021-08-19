@@ -17,8 +17,8 @@ const helpers = {
   getShieldsAddress: () => process.env.ADDRESS_SHIELD || '0xf9E9F6019631bBE7db1B71Ec4262778eb6C3c520',
 
   marketplaceAbiPath: './src/data/abi/NFTMarket.json',
-  charactersAbiPath: './src/data/abi/Weapons.json',
-  weaponsAbiPath: './src/data/abi/Characters.json',
+  charactersAbiPath: './src/data/abi/Characters.json',
+  weaponsAbiPath: './src/data/abi/Weapons.json',
   shieldsAbiPath: './src/data/abi/Shields.json',
 
   nftMarketPlace: null,
@@ -327,6 +327,8 @@ const helpers = {
 
     return '';
   },
+
+  isUserBanned: async (seller) => helpers.getNftMarketPlace().methods.isUserBanned(seller).call(),
 };
 
 module.exports = helpers;
