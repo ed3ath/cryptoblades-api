@@ -159,7 +159,7 @@ class Database {
         });
 
         resolve();
-      });
+      }).catch(reject);
     });
   }
 }
