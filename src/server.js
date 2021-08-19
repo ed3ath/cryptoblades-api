@@ -52,9 +52,7 @@ const notmatches = (path, middleware) => (req, res, next) => {
 };
 
 const notstatic = (path, middleware) => (req, res, next) => {
-  console.log('check');
   if (req.path.includes(path) && !req.path.includes('/static')) {
-    console.log('not static', req.path);
     return next();
   }
 
