@@ -327,6 +327,8 @@ const helpers = {
 
     return '';
   },
+
+  isUserBanned: async (seller) => helpers.getNftMarketPlace().methods.isUserBanned(seller).call(),
 };
 
 module.exports = helpers;
