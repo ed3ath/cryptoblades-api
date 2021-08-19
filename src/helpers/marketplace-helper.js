@@ -227,7 +227,7 @@ const helpers = {
 
     if (helpers.isWeapon(nftAddress)) {
       const weapon = await helpers.getWeapons().get(nftId);
-      const properties = weapon._properties;
+      const properties = weapon[0];
 
       const weaponElement = helpers.getElementFromProperties(properties);
       const weaponStars = helpers.getStarsFromProperties(properties);
@@ -237,9 +237,9 @@ const helpers = {
       const stat2Element = helpers.traitNumberToName(helpers.getStat2Trait(statPattern));
       const stat3Element = helpers.traitNumberToName(helpers.getStat3Trait(statPattern));
 
-      const stat1Value = weapon._stat1;
-      const stat2Value = weapon._stat2;
-      const stat3Value = weapon._stat3;
+      const stat1Value = weapon[1];
+      const stat2Value = weapon[2];
+      const stat3Value = weapon[3];
 
       const ret = {
         weaponId: nftId,
