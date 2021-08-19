@@ -16,6 +16,7 @@ const listen = async () => {
 
   const createOrUpdate = async (nftAddress, nftId, price, seller) => {
     if (banned.includes(seller)) return;
+    if (await marketplaceHelper.isUserBanned(seller)) return;
 
     const collection = marketplaceHelper.getCollection(nftAddress);
     const data = await marketplaceHelper.getNFTData(nftAddress, nftId, price, seller);
@@ -50,24 +51,29 @@ const listen = async () => {
   };
 
   const onNewListing = async (seller, nftAddress, nftId, price) => {
-    await createOrUpdate(nftAddress, nftId.toString(), price, seller);
-    console.log('[MARKET]', `Add ${marketplaceHelper.getTypeName(nftAddress)} ${nftId} from ${seller} for ${marketplaceHelper.realPrice(price)}`);
+    createOrUpdate(nftAddress, nftId.toString(), price, seller).then(() => {
+      console.log('[MARKET]', `Add ${marketplaceHelper.getTypeName(nftAddress)} ${nftId} from ${seller} for ${marketplaceHelper.realPrice(price)}`);
+    }).catch((err) => console.log(`[MARKET ADD ERROR] ${err.message}`));
   };
 
   const onListingPriceChange = async (seller, nftAddress, nftId, price) => {
-    await createOrUpdate(nftAddress, nftId.toString(), price, seller);
-    console.log('[MARKET]', `Change ${marketplaceHelper.getTypeName(nftAddress)} ${nftId} from ${seller} for ${marketplaceHelper.realPrice(price)}`);
+    createOrUpdate(nftAddress, nftId.toString(), price, seller).then(() => {
+      console.log('[MARKET]', `Change ${marketplaceHelper.getTypeName(nftAddress)} ${nftId} from ${seller} for ${marketplaceHelper.realPrice(price)}`);
+    }).catch((err) => console.log(`[MARKET CHANGE ERROR] ${err.message}`));
   };
 
   const onCancelledListing = async (seller, nftAddress, nftId) => {
-    await remove(nftAddress, nftId.toString());
-    console.log('[MARKET]', `Cancel ${marketplaceHelper.getTypeName(nftAddress)} ${nftId} from ${seller}`);
+    remove(nftAddress, nftId.toString()).then(() => {
+      console.log('[MARKET]', `Cancel ${marketplaceHelper.getTypeName(nftAddress)} ${nftId} from ${seller}`);
+    }).catch((err) => console.log(`[MARKET CANCEL ERROR] ${err.message}`));
   };
 
   const onPurchasedListing = async (buyer, seller, nftAddress, nftId) => {
-    await addTransaction(nftAddress, nftId.toString());
-    await remove(nftAddress, nftId.toString());
-    console.log('[MARKET]', `Sell ${marketplaceHelper.getTypeName(nftAddress)} ${nftId} from ${seller} to ${buyer}`);
+    addTransaction(nftAddress, nftId.toString()).then(() => {
+      remove(nftAddress, nftId.toString()).then(() => {
+        console.log('[MARKET]', `Sell ${marketplaceHelper.getTypeName(nftAddress)} ${nftId} from ${seller} to ${buyer}`);
+      }).catch((err) => console.log(`[MARKET PURCHASE1 ERROR] ${err.message}`));
+    }).catch((err) => console.log(`[MARKET PURCHASE2 ERROR] ${err.message}`));
   };
 
   const setup = () => {
