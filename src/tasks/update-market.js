@@ -12,7 +12,7 @@ const ITEMS_PER_PAGE = parseInt(process.env.MARKETPLACE_ITEMS_PAGE, 10) || 2500;
 const MAX_ITEMS_PER_UPDATE = parseInt(process.env.MAX_UPDATE, 10) || 500;
 
 exports.task = async () => {
-  if (!await marketplaceHelper.init(':Clean-Up')) {
+  if (!await marketplaceHelper.init(':Update-Market')) {
     return;
   }
 
@@ -73,6 +73,7 @@ exports.task = async () => {
       { retries: 5 });
 
       console.log(
+        '[MARKET:Update-Market]',
         marketplaceHelper.getTypeName(address),
         processed[address],
         start,
@@ -92,6 +93,8 @@ exports.task = async () => {
 
       if (results.returnedCount >= ITEMS_PER_PAGE) {
         queue.add(runQueue(start + ITEMS_PER_PAGE * 5));
+      } else {
+        checkToProcess(address, 0);
       }
     };
 
