@@ -17,14 +17,30 @@ const helpers = {
   getShieldsAddress: () => process.env.ADDRESS_SHIELD || '0xf9E9F6019631bBE7db1B71Ec4262778eb6C3c520',
 
   marketplaceAbiPath: './src/data/abi/NFTMarket.json',
-  charactersAbiPath: './src/data/abi/Weapons.json',
-  weaponsAbiPath: './src/data/abi/Characters.json',
+  charactersAbiPath: './src/data/abi/Characters.json',
+  weaponsAbiPath: './src/data/abi/Weapons.json',
   shieldsAbiPath: './src/data/abi/Shields.json',
 
   nftMarketPlace: null,
   weapons: null,
   characters: null,
   shields: null,
+
+  getAbiFromAddress: (nftAddress) => {
+    if (helpers.isCharacter(nftAddress)) {
+      return fs.readJSONSync(helpers.charactersAbiPath).abi;
+    }
+
+    if (helpers.isWeapon(nftAddress)) {
+      return fs.readJSONSync(helpers.weaponsAbiPath).abi;
+    }
+
+    if (helpers.isShield(nftAddress)) {
+      return fs.readJSONSync(helpers.shieldsAbiPath).abi;
+    }
+
+    return [];
+  },
 
   keepAlive: (provider, onDisconnect) => {
     let pingTimeout = null;
@@ -97,6 +113,8 @@ const helpers = {
 
     return helpers.provider;
   },
+
+  getWeb3: () => new Web3(process.env.WEBSOCKET_PROVIDER_URL),
 
   getContract: (address, abiPath) => new ethers.Contract(
     address,
@@ -209,12 +227,39 @@ const helpers = {
     return null;
   },
 
+  getNFTDataCall: (nftAddress, nftIds) => ({
+    abi: helpers.getAbiFromAddress(nftAddress),
+    calls: nftIds.map((nftId) => ({
+      address: nftAddress,
+      name: 'get',
+      params: [nftId],
+    })),
+  }),
+
   getNFTData: async (nftAddress, nftId, rawPrice, sellerAddress) => {
+    let data;
+
+    if (helpers.isCharacter(nftAddress)) {
+      data = await helpers.getCharacters().get(nftId);
+    }
+
+    if (helpers.isWeapon(nftAddress)) {
+      data = await helpers.getWeapons().get(nftId);
+    }
+
+    if (helpers.isShield(nftAddress)) {
+      data = await helpers.getShields().get(nftId);
+    }
+
+    return helpers.processNFTData(nftAddress, nftId, rawPrice, sellerAddress, data);
+  },
+
+  processNFTData: (nftAddress, nftId, rawPrice, sellerAddress, data) => {
     const price = helpers.realPrice(rawPrice);
     const timestamp = Date.now();
 
     if (helpers.isCharacter(nftAddress)) {
-      const character = await helpers.getCharacters().get(nftId);
+      const character = data;
       const charLevel = parseInt(character[1], 10);
       const charElement = helpers.traitNumberToName(+character[2]);
 
@@ -226,7 +271,7 @@ const helpers = {
     }
 
     if (helpers.isWeapon(nftAddress)) {
-      const weapon = await helpers.getWeapons().get(nftId);
+      const weapon = data;
       const properties = weapon._properties;
 
       const weaponElement = helpers.getElementFromProperties(properties);
@@ -261,7 +306,7 @@ const helpers = {
     }
 
     if (helpers.isShield(nftAddress)) {
-      const shield = await helpers.getShields().get(nftId);
+      const shield = data;
       const properties = shield._properties;
 
       const shieldElement = helpers.getElementFromProperties(properties);
