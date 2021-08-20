@@ -1,12 +1,15 @@
 const PQueue = require('p-queue');
+const pRetry = require('p-retry');
 
 const marketplaceHelper = require('../helpers/marketplace-helper');
+const multicall = require('../helpers/multicall');
 
 const { DB } = require('../db');
 
-const CONCURRENCY = process.env.TASK_CONCURRENCY ? +process.env.TASK_CONCURRENCY : 50;
-const ITEMS_PER_PAGE = process.env.MONGODB_ITEMS_PAGE ? +process.env.MONGODB_ITEMS_PAGE : 10000;
-const MAX_ITEMS_PER_REMOVE = process.env.MAX_DELETE ? +process.env.MAX_DELETE : 2000;
+const CONCURRENCY = parseInt(process.env.TASK_CONCURRENCY, 10) || 50;
+const ITEMS_PER_PAGE = parseInt(process.env.MONGODB_ITEMS_PAGE, 10) || 10000;
+const MAX_ITEMS_PER_REMOVE = parseInt(process.env.MAX_DELETE, 10) || 2000;
+const MAX_PER_FINAL_PRICE_PULL = parseInt(process.env.MAX_PER_FINAL_PRICE_PULL, 10) || 500;
 
 exports.duration = process.env.NODE_ENV === 'production' ? 86400 : 600;
 
@@ -25,6 +28,7 @@ exports.task = async () => {
   const soldIds = {};
   const processedIds = {};
   const removedIds = {};
+  const toCheck = {};
 
   const queue = new PQueue({ concurrency: CONCURRENCY });
 
@@ -51,13 +55,13 @@ exports.task = async () => {
     if (currentMarketEntrys) {
       const type = marketplaceHelper.getTypeName(nftAddress);
 
-      await DB.$marketSales.insertMany(currentMarketEntrys.map((entry) => {
+      await pRetry(() => DB.$marketSales.insertMany(currentMarketEntrys.map((entry) => {
         const { _id, ...data } = entry;
         return {
           type,
           [type]: data,
         };
-      }));
+      })), { retries: 5 });
     }
   };
 
@@ -67,7 +71,7 @@ exports.task = async () => {
 
     if (!collection || !idKey) return;
 
-    const removeResult = await DB[collection].deleteMany({ [idKey]: { $in: itemIds } });
+    const removeResult = await pRetry(() => DB[collection].deleteMany({ [idKey]: { $in: itemIds } }), { retries: 5 });
 
     processedIds[nftAddress].push(...itemIds);
     removedIds[nftAddress] += removeResult.deletedCount;
@@ -83,11 +87,11 @@ exports.task = async () => {
 
     const skip = ITEMS_PER_PAGE * (page);
 
-    return DB[collection].find({}, { [idKey]: 1, _id: 0 })
+    return pRetry(() => DB[collection].find({}, { [idKey]: 1, _id: 0 })
       .sort({ _id: 1 })
       .skip(skip)
       .limit(ITEMS_PER_PAGE)
-      .toArray();
+      .toArray(), { retries: 5 });
   };
 
   const checkToProcess = (maxLength) => {
@@ -103,6 +107,24 @@ exports.task = async () => {
     });
   };
 
+  const checkFinalPrice = (address, items) => {
+    queue.add(async () => {
+      const multicallData = marketplaceHelper.getFinalPriceCall(items);
+
+      const prices = await pRetry(() => multicall(marketplaceHelper.getWeb3(), multicallData.abi, multicallData.calls), { retries: 5 });
+
+      prices.forEach((price, i) => {
+        reviewedIds[address] += 1;
+
+        if (price <= 0) {
+          soldIds[items[i].address].push(items[i].nftId);
+        }
+      });
+
+      checkToProcess(MAX_ITEMS_PER_REMOVE);
+    });
+  };
+
   const runQueue = async (address, idKey, page) => {
     const results = await getBatch(address, page);
     if (!results) return;
@@ -111,6 +133,14 @@ exports.task = async () => {
       '[MARKET:Clean-Up]',
       `Page ${page} pulled ${results.length} ${marketplaceHelper.getTypeName(address)}`,
     );
+
+    const resultsFound = results.length;
+
+    while (results.length > 0) {
+      const toProcess = results.splice(0, MAX_PER_FINAL_PRICE_PULL);
+
+      checkFinalPrice(address, toProcess.map((item) => ({ address, nftId: item[idKey] })));
+    }
 
     results.forEach((item) => {
       reviewedIds[address] += 1;
@@ -125,8 +155,10 @@ exports.task = async () => {
 
     checkToProcess(MAX_ITEMS_PER_REMOVE);
 
-    if (results.length === ITEMS_PER_PAGE) {
-      queue.add(() => runQueue(address, idKey, page + 1));
+    if (resultsFound >= ITEMS_PER_PAGE) {
+      queue.add(() => runQueue(address, idKey, page + 5));
+    } else {
+      checkToProcess(0);
     }
 
     if (page % 5 === 0) {
@@ -139,10 +171,13 @@ exports.task = async () => {
     soldIds[address] = [];
     processedIds[address] = [];
     removedIds[address] = 0;
+    toCheck[address] = [];
 
     const idKey = marketplaceHelper.getIdKey(address);
 
-    queue.add(() => runQueue(address, idKey, 0));
+    for (let i = 0; i < 5; i += 1) {
+      queue.add(() => runQueue(address, idKey, i));
+    }
   });
 
   await queue.onIdle();
