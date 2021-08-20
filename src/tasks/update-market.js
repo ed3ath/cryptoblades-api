@@ -6,7 +6,7 @@ const multicall = require('../helpers/multicall');
 
 const { DB } = require('../db');
 
-exports.duration = process.env.NODE_ENV === 'production' ? 1800 : 600;
+exports.duration = process.env.NODE_ENV === 'production' ? 86400 : 600;
 
 const ITEMS_PER_PAGE = parseInt(process.env.MARKETPLACE_ITEMS_PAGE, 10) || 2500;
 const MAX_ITEMS_PER_UPDATE = parseInt(process.env.MAX_UPDATE, 10) || 500;
