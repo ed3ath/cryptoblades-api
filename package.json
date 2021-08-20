@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/cryptoblades/cryptoblades-api#readme",
   "dependencies": {
+    "@ethersproject/abi": "^5.4.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
@@ -32,6 +33,7 @@
     "mongodb": "^3.6.9",
     "node-fetch": "^2.6.1",
     "p-queue": "^5.0.0",
+    "p-retry": "^4.6.1",
     "rate-limit-redis": "^2.1.0",
     "recursive-readdir": "^2.2.2",
     "rollbar": "^2.24.0",
