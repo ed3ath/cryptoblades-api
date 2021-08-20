@@ -227,6 +227,15 @@ const helpers = {
     return null;
   },
 
+  getFinalPriceCall: (items) => ({
+    abi: fs.readJSONSync(helpers.marketplaceAbiPath).abi,
+    calls: items.map((item) => ({
+      address: helpers.getMarketplaceAddress(),
+      name: 'getFinalPrice',
+      params: [item.address, item.nftId],
+    })),
+  }),
+
   getNFTDataCall: (nftAddress, nftIds) => ({
     abi: helpers.getAbiFromAddress(nftAddress),
     calls: nftIds.map((nftId) => ({
