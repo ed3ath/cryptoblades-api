@@ -21,10 +21,10 @@ exports.route = (app) => {
     maxPrice = Math.max(maxPrice, 0);
 
     if (minStars) minStars = +minStars;
-    minStars = minStars || 1;
+    minStars = minStars || 0;
 
     if (maxStars) maxStars = +maxStars;
-    maxStars = maxStars || 5;
+    maxStars = maxStars || 4;
 
     sortBy = sortBy || 'timestamp';
 
